@@ -56,8 +56,13 @@ jobs:
           composer install --no-interaction
 
       - name: Run Backend Tests
+        env:
+          APP_ENV: testing
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
         run: |
-          php artisan migrate --env=testing
+          touch database/database.sqlite
+          php artisan migrate --force
           php artisan test
 
       - name: Build Backend Docker Image
