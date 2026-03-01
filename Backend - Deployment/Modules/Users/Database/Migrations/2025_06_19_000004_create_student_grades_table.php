@@ -22,14 +22,16 @@ return new class extends Migration {
             $table->decimal('finalGrade', 5, 2)->nullable();
             $table->timestamps();
         });
-        // Alter columns to utf8mb4/utf8mb4_unicode_ci to ensure special character support
-        DB::statement("ALTER TABLE student_grades CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        DB::statement("ALTER TABLE student_grades MODIFY userCode VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        DB::statement("ALTER TABLE student_grades MODIFY lastName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        DB::statement("ALTER TABLE student_grades MODIFY firstName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        DB::statement("ALTER TABLE student_grades MODIFY middleName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        DB::statement("ALTER TABLE student_grades MODIFY yearLevel VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        DB::statement("ALTER TABLE student_grades MODIFY subjectCode VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        // Run MySQL-specific charset/collation statements only on MySQL-compatible drivers.
+        if (in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            DB::statement("ALTER TABLE student_grades CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("ALTER TABLE student_grades MODIFY userCode VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("ALTER TABLE student_grades MODIFY lastName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("ALTER TABLE student_grades MODIFY firstName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("ALTER TABLE student_grades MODIFY middleName VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("ALTER TABLE student_grades MODIFY yearLevel VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            DB::statement("ALTER TABLE student_grades MODIFY subjectCode VARCHAR(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        }
     }
 
     public function down()
