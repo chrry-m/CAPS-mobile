@@ -44,16 +44,23 @@ jobs:
         working-directory: Backend - Deployment
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
+          extensions: mbstring, dom, fileinfo, pdo_sqlite, sqlite3
+          tools: composer:v2
 
       - name: Install dependencies
         run: |
-          composer install --no-interaction
+          composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare Backend Environment
+        run: |
+          [ -f .env ] || cp .env.example .env
+          touch database/database.sqlite
 
       - name: Run Backend Tests
         env:
@@ -61,7 +68,7 @@ jobs:
           DB_CONNECTION: sqlite
           DB_DATABASE: database/database.sqlite
         run: |
-          touch database/database.sqlite
+          php artisan config:clear
           php artisan migrate --force
           php artisan test
 
