@@ -30,9 +30,11 @@ jobs:
         run: npm run build
 
       - name: Deploy Frontend
-        if: ${{ secrets.YOUR_API_TOKEN != '' && vars.FRONTEND_DEPLOY_URL != '' }}
+        env:
+          FRONTEND_DEPLOY_TOKEN: ${{ secrets.YOUR_API_TOKEN }}
+        if: ${{ env.FRONTEND_DEPLOY_TOKEN != '' && vars.FRONTEND_DEPLOY_URL != '' }}
         run: |
-          curl --fail -X POST -H "Authorization: Bearer ${{ secrets.YOUR_API_TOKEN }}" "${{ vars.FRONTEND_DEPLOY_URL }}"
+          curl --fail -X POST -H "Authorization: Bearer $FRONTEND_DEPLOY_TOKEN" "${{ vars.FRONTEND_DEPLOY_URL }}"
 
   backend:
     runs-on: ubuntu-latest
@@ -64,6 +66,8 @@ jobs:
           docker run -d --name backend-container backend-image
 
       - name: Deploy Backend
-        if: ${{ secrets.HEROKU_API_TOKEN != '' && vars.BACKEND_DEPLOY_URL != '' }}
+        env:
+          BACKEND_DEPLOY_TOKEN: ${{ secrets.HEROKU_API_TOKEN }}
+        if: ${{ env.BACKEND_DEPLOY_TOKEN != '' && vars.BACKEND_DEPLOY_URL != '' }}
         run: |
-          curl --fail -X POST -H "Authorization: Bearer ${{ secrets.HEROKU_API_TOKEN }}" "${{ vars.BACKEND_DEPLOY_URL }}"
+          curl --fail -X POST -H "Authorization: Bearer $BACKEND_DEPLOY_TOKEN" "${{ vars.BACKEND_DEPLOY_URL }}"
