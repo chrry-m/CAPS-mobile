@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { getApiUrl } from "../utils/config";
 import { useOutletContext } from "react-router-dom";
 import AltButton from "../components/buttonAlt";
 import SubjectCard from "../components/subjectCard";
@@ -80,7 +81,7 @@ const AssoAdminContent = () => {
   // State for loading
   const [isLoading, setIsLoading] = useState(true);
 
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   // State for exam questions availability
   const [isExamQuestionsEnabled, setIsExamQuestionsEnabled] = useState({});

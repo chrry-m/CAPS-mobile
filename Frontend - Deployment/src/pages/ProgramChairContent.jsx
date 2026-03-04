@@ -13,9 +13,10 @@ import Toast from "../components/Toast";
 import useToast from "../hooks/useToast";
 import EmptyImage from "../assets/icons/empty.png";
 import Subject from "../assets/icons/papers.png";
+import { getApiUrl } from "../utils/config";
 
 const ProgramChairContent = () => {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   const [modalImage, setModalImage] = useState(null);
   const [isChoiceModalOpen, setIsChoiceModalOpen] = useState(false);

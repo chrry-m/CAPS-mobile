@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { getApiUrl } from "../utils/config";
 import { useNavigate, Outlet } from "react-router-dom";
 import SideBarToolTip from "./sidebarTooltip";
 import RegisterDropDownSmall from "./registerDropDownSmall";
@@ -213,7 +214,7 @@ const SideBarDropDown = ({
     };
   }, [showAddModal]);
 
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   useEffect(() => {
     fetchSubjects();

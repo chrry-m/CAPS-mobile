@@ -1,9 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Layout from "./components/layout";
 import ProtectedRoute from "./components/protectRoute";
 import TutorialLayout from "./components/TutorialLayout";
+import ServerConfigModal from "./components/ServerConfigModal";
+import { hasApiConfig } from "./utils/config";
 
 import Credits from "./pages/Credits";
 
@@ -31,6 +34,16 @@ import PracticeExamInfo from "./pages/PracticeExamInfo";
 import TestLogin from "./tests/testLogin";
 
 function App() {
+  const [showServerConfig, setShowServerConfig] = useState(false);
+
+  useEffect(() => {
+    // Check if API is configured on app load
+    // Show config modal if no localStorage config (works for both mobile and desktop)
+    if (!hasApiConfig()) {
+      setShowServerConfig(true);
+    }
+  }, []);
+
   return (
     <Router>
       <Routes>
@@ -160,6 +173,11 @@ function App() {
           <Route path="users" element={<Users />} />
         </Route>
       </Routes>
+
+      <ServerConfigModal
+        isOpen={showServerConfig}
+        onClose={() => setShowServerConfig(false)}
+      />
     </Router>
   );
 }

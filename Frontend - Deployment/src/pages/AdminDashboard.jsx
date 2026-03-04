@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ComingSoon from "../assets/icons/comingsoon.png";
 import { format, isThisWeek, isToday, isThisMonth, parseISO } from "date-fns";
+import { getApiUrl } from "../utils/config";
 
 const AdminDashboard = () => {
   const [totalQuestions, setTotalQuestions] = useState(0);
@@ -59,7 +60,7 @@ const AdminDashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/questions/count`,
+          `${getApiUrl()}/questions/count`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -94,7 +95,7 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
         // Fetch all users (first page, large limit)
         const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/users?limit=10000`,
+          `${getApiUrl()}/users?limit=10000`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -140,7 +141,7 @@ const AdminDashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/subjects`,
+          `${getApiUrl()}/subjects`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -177,7 +178,7 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
         // Fetch all questions
         const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/questions/count`,
+          `${getApiUrl()}/questions/count`,
           {
             headers: {
               "Content-Type": "application/json",

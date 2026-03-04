@@ -39,10 +39,11 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Copy custom entrypoint script
 COPY docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 # Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["apache2-foreground"]
 
 # Expose port 80
 EXPOSE 80

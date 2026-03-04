@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { getApiUrl } from "../utils/config";
 import SubPhoto from "../assets/gottfield.jpg";
 import SearchQuery from "./SearchQuery";
 import ConfirmModal from "./confirmModal";
@@ -225,7 +226,7 @@ const SubjectCard = ({
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/programs`,
+          `${getApiUrl()}/programs`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -340,7 +341,7 @@ const SubjectCard = ({
   const handlePreviewClick = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/practice-exam/preview/${subjectID}`,
+        `${getApiUrl()}/practice-exam/preview/${subjectID}`,
         {
           method: "GET",
           headers: {
@@ -379,7 +380,7 @@ const SubjectCard = ({
     setIsDeleting(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/remove-assigned-subject/${subjectID}`,
+        `${getApiUrl()}/api/remove-assigned-subject/${subjectID}`,
         {
           method: "DELETE",
           headers: {

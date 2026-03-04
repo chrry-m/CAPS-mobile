@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getApiUrl } from "../utils/config";
 import SubjectSearchInput from "./SubjectSearchInput";
 import ExamPreviewModal from "./qualifyingExamPreview";
 import RegisterDropDownSmall from "./registerDropDownSmall";
@@ -27,7 +28,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     isEnabled: true,
   });
 
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   useEffect(() => {
     fetchSubjects();

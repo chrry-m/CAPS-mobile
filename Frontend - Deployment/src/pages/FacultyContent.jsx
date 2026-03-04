@@ -13,6 +13,7 @@ import Toast from "../components/Toast";
 import useToast from "../hooks/useToast";
 import EmptyImage from "../assets/icons/empty.png";
 import Subject from "../assets/icons/papers.png";
+import { getApiUrl } from "../utils/config";
 
 // Main faculty dashboard component for managing questions
 const FacultyContent = () => {
@@ -66,7 +67,7 @@ const FacultyContent = () => {
   // State for question addition
   const [isAddingQuestion, setIsAddingQuestion] = useState(false);
   const buttonRef = useRef(null);
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   // State for question editing
   const [editingQuestion, setEditingQuestion] = useState(null);

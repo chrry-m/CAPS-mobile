@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { getApiUrl } from "../utils/config";
 
 // Displays App Version
 const AppVersion = () => {
   const [version, setVersion] = useState("");
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   useEffect(() => {
     fetch(`${apiUrl}/api/app-version`)

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { getApiUrl } from "../utils/config";
 // Inline custom dropdown for Coverage and Difficulty Distribution
 import {
   useRef as useLocalRef,
@@ -17,7 +18,7 @@ const PracticeExamConfig = ({
   practiceExamSettings,
   setPracticeExamSettings,
 }) => {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const [mode, setMode] = useState("default");
   const [isEditing, setIsEditing] = useState(false);
 

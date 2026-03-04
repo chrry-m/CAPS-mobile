@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import QuestionListModal from "../components/QuestionListModal";
+import { getApiUrl } from "../utils/config";
 
 const TimerCompletionModal = ({
   isOpen,
@@ -71,7 +72,7 @@ const PracticeExam = ({ closeModal }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [examStartTime] = useState(new Date().toISOString());
   const [selectedImageUrl, setSelectedImageUrl] = useState(null);
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const navigate = useNavigate();
   const location = useLocation();
   const {

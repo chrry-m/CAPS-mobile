@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
+import { getApiUrl } from "../utils/config";
 import CustomDropdown from "./customDropdown";
 import WarnOnExit from "../hooks/WarnOnExit";
 
 // Practice Question Form or Adding Practice Questions
 const CombinedPracticeQuestionForm = ({ subjectID, onComplete, onCancel }) => {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const [showTip, setShowTip] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const editorRef = useRef(null);

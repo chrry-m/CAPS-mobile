@@ -1,7 +1,8 @@
 import { useEffect } from "react";
+import { getApiUrl } from "../utils/config";
 
 const useAutoLogoutOnClose = () => {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   useEffect(() => {
     const handleUnload = () => {

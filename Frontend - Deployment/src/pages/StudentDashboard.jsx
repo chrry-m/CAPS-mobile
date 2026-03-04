@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../components/button";
 import { useState, useEffect, useRef } from "react";
+import { getApiUrl } from "../utils/config";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const StudentDashboard = () => {
   const [error, setError] = useState("");
   const [subjectError, setSubjectError] = useState("");
   const [isSearchLoading, setIsSearchLoading] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const [showForm, setShowForm] = useState(false);
   const [examStarted, setExamStarted] = useState(false);
   const [ongoingExam, setOngoingExam] = useState(null);

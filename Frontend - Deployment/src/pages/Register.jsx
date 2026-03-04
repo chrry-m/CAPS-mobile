@@ -5,6 +5,7 @@ import collegeLogo from "/src/assets/college-logo.png";
 import RegisterDropDown from "../components/registerDropDown.jsx";
 import AppVersion from "../components/appVersion.jsx";
 import RegisterDropDownSmall from "../components/registerDropDownSmall.jsx";
+import { getApiUrl } from "../utils/config";
 
 export default function Register() {
   const [userCode, setUserCode] = useState("");
@@ -28,7 +29,7 @@ export default function Register() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const [message, setMessage] = useState("");
   const [showTooltip, setShowTooltip] = useState(false);
   const tooltipRef = useRef(null);

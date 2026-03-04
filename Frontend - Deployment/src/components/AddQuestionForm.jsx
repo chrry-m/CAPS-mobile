@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { getApiUrl } from "../utils/config";
 import CustomDropdown from "./customDropdown";
 import WarnOnExit from "../hooks/WarnOnExit";
 import Toast from "./Toast";
@@ -12,7 +13,7 @@ const CombinedQuestionForm = ({
   activeTab,
   isExamQuestionsEnabled: propIsExamQuestionsEnabled,
 }) => {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const { toast, showToast } = useToast();
   const [showTip, setShowTip] = useState(false);
   const [isFocused, setIsFocused] = useState(false);

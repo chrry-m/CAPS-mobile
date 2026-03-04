@@ -5,6 +5,8 @@ import Toast from "./Toast";
 import useToast from "../hooks/useToast";
 import collegeLogo from "/src/assets/college-logo.png";
 import { logoutUser } from "../utils/logoutUser";
+import ServerConfigModal from "./ServerConfigModal";
+import { getApiBaseUrl, getApiUrl } from "../utils/config";
 
 // Utility to get a random color from a palette
 const AVATAR_COLORS = [
@@ -54,7 +56,7 @@ const AdminHeader = ({ title }) => {
   const isTutorialPage = location.pathname.includes("/help");
   const collegeLogo = new URL("../assets/college-logo.png", import.meta.url)
     .href;
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const dropdownRef = useRef(null);
   const { toast, showToast } = useToast();
 
@@ -93,6 +95,8 @@ const AdminHeader = ({ title }) => {
   const [avatarColor, setAvatarColor] = useState("bg-gray-300");
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showServerConfigModal, setShowServerConfigModal] = useState(false);
+  const [currentApiUrl, setCurrentApiUrl] = useState(getApiBaseUrl());
 
   // Refs for modal content
   const profileModalRef = useRef(null);
@@ -549,6 +553,16 @@ const AdminHeader = ({ title }) => {
                 </button>
 
                 <button
+                  onClick={() => {
+                    setShowServerConfigModal(true);
+                    setDropdownOpen(false);
+                  }}
+                  className="flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black transition duration-200 ease-in-out hover:bg-gray-200"
+                >
+                  <i className="bx bx-server mr-2 text-[16px]"></i> Server Configuration
+                </button>
+
+                <button
                   onClick={() =>
                     alert("The dark mode feature is still under development.")
                   }
@@ -930,6 +944,18 @@ const AdminHeader = ({ title }) => {
           </div>
         </div>
       )}
+
+      <ServerConfigModal
+        isOpen={showServerConfigModal}
+        onClose={() => setShowServerConfigModal(false)}
+        onSave={(url) => setCurrentApiUrl(url)}
+      />
+
+      <ServerConfigModal
+        isOpen={showServerConfigModal}
+        onClose={() => setShowServerConfigModal(false)}
+        onSave={(url) => setCurrentApiUrl(url)}
+      />
 
       <Toast message={toast.message} type={toast.type} show={toast.show} />
     </div>

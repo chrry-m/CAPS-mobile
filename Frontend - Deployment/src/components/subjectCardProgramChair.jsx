@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { getApiUrl } from "../utils/config";
 import SubPhoto from "../assets/gottfield.jpg";
 import PracticeExamConfigProgChair from "./SubjectSettingsDeanProgChair";
 import { useNavigate } from "react-router-dom";
@@ -262,7 +263,7 @@ const SubjectCard = ({
       const token = localStorage.getItem("token");
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/programs`,
+          `${getApiUrl()}/programs`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -303,7 +304,7 @@ const SubjectCard = ({
         yearLevelID: String(editedSubject.yearLevelID),
       };
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/subjects/${subjectID}/update`,
+        `${getApiUrl()}/subjects/${subjectID}/update`,
         {
           method: "PUT",
           headers: {
@@ -444,7 +445,7 @@ const SubjectCard = ({
   const handlePreviewClick = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/practice-exam/preview/${subjectID}`,
+        `${getApiUrl()}/practice-exam/preview/${subjectID}`,
         {
           method: "GET",
           headers: {
@@ -483,7 +484,7 @@ const SubjectCard = ({
     setIsDeleting(true);
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/subjects/${subjectID}/delete`,
+        `${getApiUrl()}/api/subjects/${subjectID}/delete`,
         {
           method: "DELETE",
           headers: {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { getApiUrl } from "../utils/config";
 import SortCustomDropdown from "./sortCustomDropdown";
 import ConfirmModal from "./confirmModal";
 import LoadingOverlay from "./loadingOverlay";
@@ -73,7 +74,7 @@ const UserList = () => {
   // Add new state for user type tabs
   const [studentsOnly, setStudentsOnly] = useState(false); // true: students only, false: others only
 
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
 
   // Get toast functions from hook
   const { toast, showToast } = useToast();

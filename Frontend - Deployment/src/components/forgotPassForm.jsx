@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getApiUrl } from "../utils/config";
 import { useNavigate } from "react-router-dom";
 import univLogo from "../assets/univLogo.png";
 import AppVersion from "../components/appVersion";
@@ -7,7 +8,7 @@ import Toast from "./Toast";
 import useToast from "../hooks/useToast";
 
 const ForgotPasswordForm = () => {
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiUrl = getApiUrl();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast, showToast } = useToast();

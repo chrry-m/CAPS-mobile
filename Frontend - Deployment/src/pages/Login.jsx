@@ -6,6 +6,8 @@ import LoadingOverlay from "../components/loadingOverlay";
 import AppVersion from "../components/appVersion";
 import Toast from "../components/Toast";
 import useToast from "../hooks/useToast";
+import ServerConfigModal from "../components/ServerConfigModal";
+import { getApiBaseUrl, getApiUrl } from "../utils/config";
 
 export default function LoginPage() {
   const [idCode, setIdCode] = useState("");
@@ -13,7 +15,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const [showServerConfig, setShowServerConfig] = useState(false);
+  const [currentApiUrl, setCurrentApiUrl] = useState(getApiBaseUrl());
+  const apiUrl = getApiUrl();
 
   // Get toast functions from hook
   const { toast, showToast } = useToast();
@@ -32,7 +36,10 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch(`${apiUrl}/api/login`, {
+      const loginUrl = `${apiUrl}/api/login`;
+      console.log('Attempting login to:', loginUrl);
+      
+      const response = await fetch(loginUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -44,7 +51,20 @@ export default function LoginPage() {
         }),
       });
 
-      const data = await response.json();
+      console.log('Response status:', response.status);
+      console.log('Response headers:', [...response.headers.entries()]);
+      
+      const responseText = await response.text();
+      console.log('Response text preview:', responseText.substring(0, 200));
+      
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        showToast(`Server returned invalid JSON. Status: ${response.status}. URL: ${loginUrl}`, "error");
+        return;
+      }
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -90,7 +110,15 @@ export default function LoginPage() {
           break;
       }
     } catch (error) {
-      showToast("Something went wrong. Please try again later.", "error");
+      const fullUrl = `${apiUrl}/api/login`;
+      console.error('Login catch block error:', error);
+      if (!apiUrl) {
+        showToast("Server not configured. Please click 'Server Configuration'.", "error");
+      } else if (error.name === 'TypeError' && error.message?.includes('fetch')) {
+        showToast(`Network error - cannot reach ${apiUrl}. Check URL and internet connection.`, "error");
+      } else {
+        showToast(`Error: ${error.message}`, "error");
+      }
     } finally {
       setIsLogIn(false);
     }
@@ -422,12 +450,25 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-          <button
-            className="mt-2 mb-5 text-sm text-[#FE6902] hover:underline"
-            onClick={() => navigate("/forgot-password")}
-          >
-            Forgot your password?
-          </button>
+          <div className="flex w-full justify-between">
+            <div className="flex flex-col">
+              <button
+                className="mt-2 text-sm text-[#FE6902] hover:underline text-left"
+                onClick={() => setShowServerConfig(true)}
+              >
+                Server Configuration
+              </button>
+              <span className="text-xs text-gray-400 truncate max-w-[200px]">
+                {currentApiUrl || apiUrl || 'Using default server'}
+              </span>
+            </div>
+            <button
+              className="mt-2 mb-5 text-sm text-[#FE6902] hover:underline"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot your password?
+            </button>
+          </div>
           <div className="my-2 flex w-full items-center">
             <div className="h-px flex-1 bg-gray-200"></div>
             <span className="mx-2 text-xs text-gray-400">
@@ -447,6 +488,15 @@ export default function LoginPage() {
           </span>
         </div>
       </div>
+
+      <ServerConfigModal
+        isOpen={showServerConfig}
+        onClose={() => {
+          setShowServerConfig(false);
+          setCurrentApiUrl(getApiBaseUrl());
+        }}
+        onSave={(url) => setCurrentApiUrl(url)}
+      />
 
       <Toast message={toast.message} type={toast.type} show={toast.show} />
     </>
