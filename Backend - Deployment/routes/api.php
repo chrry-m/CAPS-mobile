@@ -106,6 +106,9 @@ Route::middleware(['auth:sanctum', TokenExpirationMiddleware::class, 'role:2,3,4
 
     // Get exam questions status
     Route::get('/subjects/{subjectID}/exam-questions-status', [SubjectController::class, 'getExamQuestionsStatus']);
+
+    // Image upload for subjects (admin/faculty only)
+    Route::post('/subjects/{id}/upload-image', [SubjectController::class, 'uploadSubjectImage']);
 });
 
 /*
@@ -131,6 +134,12 @@ Route::middleware(['api', 'auth:sanctum', 'role:1'])->group(function () {
     Route::post('/personal-exam/generate/{subjectID}/{teacherID}', [PracticeExamController::class, 'generatePersonalExam']);
     // Submit personal exam results
     Route::post('/personal-exam/submit', [PracticeExamController::class, 'submitPersonalExam']);
+
+    // Student dashboard — subjects grouped by base name with exam settings
+    Route::get('/student/dashboard-subjects', [SubjectController::class, 'getDashboardSubjects']);
+
+    // Exam preview — student views exam metadata before starting
+    Route::get('/subjects/{id}/exam-preview', [SubjectController::class, 'getExamPreview']);
 });
 
 /*

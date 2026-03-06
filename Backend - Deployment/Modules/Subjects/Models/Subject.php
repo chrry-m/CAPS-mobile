@@ -24,7 +24,8 @@ class Subject extends Model
         'subjectCode',
         'subjectName', 
         'yearLevelID',
-        'is_enabled_for_exam_questions'
+        'is_enabled_for_exam_questions',
+        'subjectImage',
     ];
 
     protected $casts = [
@@ -60,4 +61,5 @@ class Subject extends Model
     {
         return $this->hasMany(PracticeExamResult::class, 'subjectID');
     }
+
 }
