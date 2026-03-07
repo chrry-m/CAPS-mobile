@@ -134,7 +134,6 @@ docker-data/mysql_data/
 docker-data
 
 # docker compose
-docker-compose.yml
 Questions for Testing/Sample Questions.txt
 Questions for Testing/EE SAMPLE QUESTIONS.txt
 Questions for Testing/CPE SAMPLE QUESTIONS.txt
