@@ -1,0 +1,45 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: caps_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: caps_db
+      MYSQL_USER: caps_user
+      MYSQL_PASSWORD: caps_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./Backend - Deployment
+      dockerfile: Dockerfile
+    container_name: caps_backend
+    ports:
+      - "8000:80"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=caps_db
+      - DB_USERNAME=caps_user
+      - DB_PASSWORD=caps_password
+    depends_on:
+      - mysql
+
+  frontend:
+    build:
+      context: ./Frontend - Deployment
+      dockerfile: Dockerfile
+    container_name: caps_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
