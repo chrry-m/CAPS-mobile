@@ -1,5 +1,50 @@
 @import "tailwindcss";
 
+
+@variant dark (&:where(.dark, .dark *));
+
+
+:root {
+  /* Primary Brand Color */
+  --color-primary: #FE6902;
+  --color-primary-hover: #ed3700;
+
+  /* Light Mode Colors */
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-tertiary: #f3f4f6;
+  --color-border: #d1d5db;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+/* Dark Mode */
+.dark {
+  --color-text: #f9fafb;
+  --color-text-secondary: #9ca3af;
+  --color-bg: #0a0a0a;
+  --color-bg-secondary: #111111;
+  --color-bg-tertiary: #1a1a1a;
+  --color-border: #3d3d3d;
+}
+
+html {
+  background-color: var(--color-bg);
+}
+
+body,
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
 .text-stroke {
   text-shadow:
     rgba(223, 239, 255) 0px 3px 0px,
@@ -17,6 +62,7 @@
 .font-inter {
   font-family: "Inter";
 }
+
 .font-gg-sans {
   font-family:
     "Segoe UI",
@@ -26,6 +72,7 @@
     "Roboto",
     sans-serif;
 }
+
 .font-medium {
   font-weight: 550;
 }
@@ -53,11 +100,10 @@
 }
 
 select option:hover {
-  background-color: rgb(
-    254,
-    105,
-    2
-  ) !important; /* Change to your desired hover color */
+  background-color: rgb(254,
+      105,
+      2) !important;
+  /* Change to your desired hover color */
   color: white !important;
 }
 
@@ -78,6 +124,7 @@ select option:hover {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -88,6 +135,7 @@ select option:hover {
     opacity: 0;
     transform: translateX(-40px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -100,13 +148,15 @@ select option:hover {
 
 .scrollbar-show-on-hover {
   overflow-y: hidden;
-  padding-right: 0; /* No padding when hidden */
+  padding-right: 0;
+  /* No padding when hidden */
   transition: padding-right 0.2s ease;
 }
 
 .scrollbar-show-on-hover:hover {
   overflow-y: auto;
-  padding-right: 0; /* Add padding when scrolling is enabled */
+  padding-right: 0;
+  /* Add padding when scrolling is enabled */
 }
 
 /* Scrollbar style for WebKit browsers */
@@ -130,8 +180,10 @@ select option:hover {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .scrollbar-hide {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* Shimmer effect applied to elements */
@@ -168,11 +220,13 @@ select option:hover {
     opacity: 0;
     transform: translateY(20px);
   }
+
   10%,
   90% {
     opacity: 1;
     transform: translateY(0);
   }
+
   100% {
     opacity: 0;
     transform: translateY(20px);
@@ -188,6 +242,7 @@ select option:hover {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -232,12 +287,14 @@ select option:hover {
 
   scrollbar-color: #838484 #f3f4f6;
 }
+
 .edit-profile-modal-scrollbar::-webkit-scrollbar {
   width: 7px;
   background: #f3f4f6;
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
 }
+
 .edit-profile-modal-scrollbar::-webkit-scrollbar-thumb {
   background: #d1d5db;
   border-top-right-radius: 12px;
@@ -255,10 +312,12 @@ select option:hover {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.4);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -271,10 +330,12 @@ select option:hover {
 
 /* Pulse animation for selected correct answer */
 @keyframes correct-pulse {
+
   0%,
   100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -295,6 +356,7 @@ select option:hover {
   background-size: calc(100% / 3) 50%;
   animation: l3 1s infinite linear;
 }
+
 @keyframes l3 {
   20% {
     background-position:
@@ -302,18 +364,21 @@ select option:hover {
       50% 50%,
       100% 50%;
   }
+
   40% {
     background-position:
       0% 100%,
       50% 0%,
       100% 50%;
   }
+
   60% {
     background-position:
       0% 50%,
       50% 100%,
       100% 0%;
   }
+
   80% {
     background-position:
       0% 50%,
@@ -338,6 +403,7 @@ select option:hover {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -352,6 +418,7 @@ select option:hover {
     opacity: 0;
     transform: translateY(-8px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -371,11 +438,13 @@ select option:hover {
     opacity: 0;
     transform: scale(0.95);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
   }
 }
+
 .animate-search-popup {
   animation: search-popup 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -385,11 +454,13 @@ select option:hover {
     opacity: 1;
     transform: scale(1);
   }
+
   100% {
     opacity: 0;
     transform: scale(0.95);
   }
 }
+
 .animate-search-popout {
   animation: search-popout 0.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -399,6 +470,7 @@ select option:hover {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;

@@ -8,7 +8,7 @@ import Questionnare from "./Questionnare";
 import PrintExamModal from "./PrintExamModal";
 import AppVersion from "./appVersion";
 
-// Displays the main sidebar
+// Renders the non-student navigation shell, including the mobile admin bottom bar.
 const Sidebar = ({
   role_id,
   setSelectedSubject,
@@ -101,7 +101,7 @@ const Sidebar = ({
   if (isMobile) {
     return (
       <>
-        <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-300 bg-white px-6 py-2 min-[500px]:px-9">
+        <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-300 bg-white/95 px-6 py-2 backdrop-blur-md dark:border-white/10 dark:bg-black/95 min-[500px]:px-9">
           <div className="flex items-center justify-between">
             {/* Left side - Users and Print */}
             <div className="flex items-center gap-5 min-[345px]:gap-8 min-[500px]:gap-18">
@@ -114,7 +114,7 @@ const Sidebar = ({
                     {item.isButton ? (
                       <button
                         onClick={item.onClick}
-                        className="flex flex-col items-center p-2 text-gray-700 transition-colors hover:text-gray-800"
+                        className="flex flex-col items-center p-2 text-gray-700 transition-colors hover:text-gray-800 dark:text-gray-200 dark:hover:text-white"
                       >
                         <i className={`bx ${item.icon} mb-[5px] text-2xl`}></i>
                         <span className="text-xs">{item.label}</span>
@@ -126,7 +126,7 @@ const Sidebar = ({
                         className={`flex flex-col items-center p-2 transition-colors ${
                           isActive(item.path)
                             ? "text-orange-600"
-                            : "text-gray-700 hover:text-gray-800"
+                            : "text-gray-700 hover:text-gray-800 dark:text-gray-200 dark:hover:text-white"
                         }`}
                       >
                         <i className={`bx ${item.icon} mb-[5px] text-2xl`}></i>
@@ -179,7 +179,7 @@ const Sidebar = ({
                       selectedSubject={selectedSubject}
                       refreshSubjects={() => {}}
                     />
-                    <span className="-mt-[6px] text-xs text-gray-600">
+                    <span className="-mt-[6px] text-xs text-gray-600 dark:text-gray-300">
                       Subjects
                     </span>
                   </div>
@@ -196,7 +196,7 @@ const Sidebar = ({
                       homePath={"/Dean/subjects"}
                       className="bx bx-file-detail"
                     />
-                    <span className="-mt-[6px] text-xs text-gray-600">
+                    <span className="-mt-[6px] text-xs text-gray-600 dark:text-gray-300">
                       Quizzes
                     </span>
                   </div>
@@ -336,12 +336,12 @@ const Sidebar = ({
       {/* Sidebar */}
       <div
         ref={sidebarRef}
-        className={`fixed top-0 left-0 z-55 h-[100vh] border-r border-gray-300 bg-white px-2 py-3 text-gray-700 transition-all duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-55 h-[100vh] border-r border-gray-300 bg-white px-2 py-3 text-gray-700 transition-all duration-300 ease-in-out dark:border-white/10 dark:bg-black dark:text-gray-200 ${
           isExpanded ? "w-[55.5px]" : "w-[55.5px]"
         }`}
       >
         {/* Logo & CAPS text */}
-        <div className="flex cursor-pointer gap-4 rounded-md px-1 py-[4px] hover:bg-gray-100">
+        <div className="flex cursor-pointer gap-4 rounded-md px-1 py-[4px] hover:bg-gray-100 dark:hover:bg-white/5">
           <img
             key={role_id}
             src={collegeLogo}
@@ -358,7 +358,7 @@ const Sidebar = ({
                 {item.isButton ? (
                   <button
                     onClick={item.onClick}
-                    className={`flex w-full cursor-pointer items-center gap-3 rounded px-[8px] py-[8px] transition-colors hover:bg-gray-100 hover:text-gray-800`}
+                    className={`flex w-full cursor-pointer items-center gap-3 rounded px-[8px] py-[8px] transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-white/5 dark:hover:text-white`}
                   >
                     <i className={`bx ${item.icon} text-2xl`}></i>
                   </button>
@@ -366,8 +366,8 @@ const Sidebar = ({
                   <Link
                     to={item.path}
                     onClick={handleMenuClick}
-                    className={`flex cursor-pointer items-center gap-3 rounded-md px-[8px] py-[8px] transition-colors hover:bg-gray-100 hover:text-gray-800${
-                      isActive(item.path) ? "" : "hover:text-gray-800"
+                    className={`flex cursor-pointer items-center gap-3 rounded-md px-[8px] py-[8px] transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-white/5 dark:hover:text-white${
+                      isActive(item.path) ? "" : "hover:text-gray-800 dark:hover:text-white"
                     }`}
                   >
                     <i
@@ -383,7 +383,7 @@ const Sidebar = ({
         {parsedRoleId === 5 && (
           <div className="flex flex-col space-y-[5px]">
             <>
-              <div className="mb-3 h-[1px] w-full bg-[rgb(200,200,200)]"></div>
+              <div className="mb-3 h-[1px] w-full bg-[rgb(200,200,200)] dark:bg-white/10"></div>
             </>
             <div
               className={`${isSubjectFocused ? "top-[75px] z-50 w-full" : ""}`}
@@ -434,7 +434,7 @@ const Sidebar = ({
         {parsedRoleId === 4 && (
           <div className="flex flex-col space-y-[5px]">
             <>
-              <div className="mb-3 flex h-[1px] w-full bg-[rgb(200,200,200)]"></div>
+              <div className="mb-3 flex h-[1px] w-full bg-[rgb(200,200,200)] dark:bg-white/10"></div>
             </>
             <div
               className={`${isSubjectFocused ? "top-[75px] z-50 w-full" : ""}`}

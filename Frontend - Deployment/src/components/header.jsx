@@ -5,8 +5,8 @@ import Toast from "./Toast";
 import useToast from "../hooks/useToast";
 import collegeLogo from "/src/assets/college-logo.png";
 import { logoutUser } from "../utils/logoutUser";
-import ServerConfigModal from "./ServerConfigModal";
-import { getApiBaseUrl, getApiUrl } from "../utils/config";
+import { getApiUrl } from "../utils/config";
+import { useTheme } from "../contexts/ThemeContext.jsx";
 
 // Utility to get a random color from a palette
 const AVATAR_COLORS = [
@@ -20,31 +20,37 @@ const AVATAR_COLORS = [
   "bg-teal-600",
   "bg-indigo-600",
 ];
+
+// Picks a random avatar color the first time a user profile is loaded on this device.
 function getRandomAvatarColor() {
   return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
 }
 
+// Builds the storage key used to persist each user's avatar color locally.
 function getAvatarColorKey(userInfo) {
   // Prefer email, fallback to userCode, fallback to 'default'
   return userInfo?.email || userInfo?.userCode || "default";
 }
 
+// Reads the saved avatar color for the current user, if one already exists.
 function getPersistedAvatarColor(userInfo) {
   const key = getAvatarColorKey(userInfo);
   return localStorage.getItem("avatarColor_" + key);
 }
 
+// Saves the chosen avatar color so the same user keeps the same badge color.
 function setPersistedAvatarColor(userInfo, color) {
   const key = getAvatarColorKey(userInfo);
   localStorage.setItem("avatarColor_" + key, color);
 }
 
+// Removes the stored avatar color when the user logs out.
 function clearPersistedAvatarColor(userInfo) {
   const key = getAvatarColorKey(userInfo);
   localStorage.removeItem("avatarColor_" + key);
 }
 
-// Web App Header
+// Shared protected-page header for profile, help, theme, and logout actions.
 const AdminHeader = ({ title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
@@ -59,6 +65,7 @@ const AdminHeader = ({ title }) => {
   const apiUrl = getApiUrl();
   const dropdownRef = useRef(null);
   const { toast, showToast } = useToast();
+  const { isDark, toggleTheme } = useTheme();
 
   const [isChangePasswordSubmitting, setIsChangePasswordSubmitting] =
     useState(false);
@@ -94,9 +101,7 @@ const AdminHeader = ({ title }) => {
   // Store a persistent color for the avatar per user
   const [avatarColor, setAvatarColor] = useState("bg-gray-300");
 
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showServerConfigModal, setShowServerConfigModal] = useState(false);
-  const [currentApiUrl, setCurrentApiUrl] = useState(getApiBaseUrl());
+const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Refs for modal content
   const profileModalRef = useRef(null);
@@ -454,45 +459,48 @@ const AdminHeader = ({ title }) => {
 
   return (
     <div>
-      <div className="open-sans fixed top-0 left-0 z-49 flex h-[44px] w-full items-center justify-between border-b border-gray-300 bg-white px-6 py-[10px] sm:z-52">
-        <div className="-ml-3 flex items-center gap-2">
-          <img src={collegeLogo} alt="College Logo" className="size-[30px]" />
+      <div 
+        className="open-sans fixed top-0 left-0 z-49 flex w-full items-center justify-between border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-0"
+        style={{
+          height: '52px',
+          paddingTop: 'max(12px, env(safe-area-inset-top, 12px))',
+          paddingBottom: '10px',
+          paddingLeft: '16px',
+          paddingRight: '16px'
+        }}
+      >
+        <div className="flex items-center gap-2 z-10 w-1/4">
+          <img src={collegeLogo} alt="College Logo" className="size-[26px] sm:size-[30px]" />
+        </div>
+
+        {/* Absolutely Centered - Title */}
+        <div className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center pointer-events-none" style={{ top: 'max(50%, calc(50% + env(safe-area-inset-top, 0px)))' }}>
+          <span className="text-[14px] sm:text-[16px] font-semibold leading-tight text-gray-800 dark:text-gray-200 capitalize">{title}</span>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2">
-          <span className="text-[14px] text-gray-500">{title}</span>
+        <div className="flex items-center justify-end gap-1 sm:gap-2 text-right z-10 w-1/4">
 
           {/* Help Button */}
           <button
             onClick={() => {
-              if (title !== "Student") {
-                window.open(
-                  "https://docs.google.com/spreadsheets/d/1G3-PccAywmrd9QU94p9DJ58JYBg5jeyB/edit?gid=1756766640#gid=1756766640",
-                  "_blank",
-                );
-              } else {
-                window.open(
-                  "https://docs.google.com/spreadsheets/d/1YzHRRk4Y_LSc9-fazPL4tDginLq_V1-6/edit?fbclid=IwY2xjawLBQ-5leHRuA2FlbQIxMABicmlkETFzMFZMckszUTBuMzFWYTIyAR7sVSVjXMwMZEQr9U0iCvDgzORURS9UFfOmPEEVEJxgxnAegPuUAeN99-GXBQ_aem_3VnqJNYrAHDz_RMtVx_Ssg&gid=1756766640#gid=1756766640",
-                  "_blank",
-                );
-              }
+              const helpUrl =
+                title === "Student"
+                  ? "https://docs.google.com/spreadsheets/d/1YzHRRk4Y_LSc9-fazPL4tDginLq_V1-6/edit?fbclid=IwY2xjawLBQ-5leHRuA2FlbQIxMABicmlkETFzMFZMckszUTBuMzFWYTIyAR7sVSVjXMwMZEQr9U0iCvDgzORURS9UFfOmPEEVEJxgxnAegPuUAeN99-GXBQ_aem_3VnqJNYrAHDz_RMtVx_Ssg&gid=1756766640#gid=1756766640"
+                  : "https://docs.google.com/spreadsheets/d/1G3-PccAywmrd9QU94p9DJ58JYBg5jeyB/edit?gid=1756766640#gid=1756766640";
+
+              window.open(helpUrl, "_blank");
             }}
-            className={`border-color flex cursor-pointer items-center gap-1 rounded-lg border px-2 py-1.5 text-black ${
-              title === "student"
-                ? "cursor-not-allowed opacity-50"
-                : "hover:bg-gray-200"
-            }`}
-            disabled={title === "student"}
+            className="border-color flex cursor-pointer items-center gap-1 rounded-lg border bg-white px-2 py-1.5 text-gray-800 shadow-sm transition hover:bg-gray-100 dark:border-white/10 dark:bg-[var(--color-bg-secondary)] dark:text-white dark:hover:bg-[var(--color-bg-tertiary)]"
           >
             <i className="bx bx-message-question-mark text-md ml-1"></i>
             <span className="pr-1.5 text-[14px]">Help</span>
           </button>
 
-          {/* Three-dot Dropdown */}
+{/* Three-dot Dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
-              className="-mr-3 flex cursor-pointer items-center rounded-full border-2 border-gray-300 bg-white transition hover:border-gray-400 hover:bg-gray-100"
+              className="-mr-3 flex cursor-pointer items-center rounded-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-black transition hover:border-gray-400 dark:hover:bg-gray-800"
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               {/* Circle with initial */}
@@ -503,12 +511,12 @@ const AdminHeader = ({ title }) => {
               </div>
 
               {/* Chevron */}
-              <i className="bx bx-chevron-down mr-[3px] text-2xl text-gray-700"></i>
+              <i className="bx bx-chevron-down mr-[3px] text-2xl text-gray-700 dark:text-gray-300"></i>
             </button>
 
             {/* Dropdown Buttons */}
             {dropdownOpen && (
-              <div className="fade-in absolute top-[44px] right-[-10px] z-51 w-60 rounded-md border border-gray-300 bg-white p-1 shadow-sm">
+              <div className="fade-in absolute top-[44px] right-[-10px] z-51 w-60 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-black p-1 shadow-sm">
                 <div className="flex items-center gap-3 border-gray-200 px-2 py-3">
                   <div
                     className={`flex h-8 w-10 items-center justify-center rounded-full ${userInfo ? avatarColor : "bg-gray-300"} text-sm font-bold text-white`}
@@ -544,36 +552,24 @@ const AdminHeader = ({ title }) => {
                   </div>
                 </div>
 
-                <div className="mx-1 h-[1px] bg-[rgb(200,200,200)]" />
+<div className="mx-1 h-[1px] bg-[rgb(200,200,200)]" />
+                
                 <button
-                  onClick={() => setShowProfileModal(true)}
-                  className="mt-1 flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black transition duration-200 ease-in-out hover:bg-gray-200"
+                  className="flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black dark:text-white transition duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
                   <i className="bx bx-cog mr-2 text-[16px]"></i> Settings
                 </button>
 
                 <button
-                  onClick={() => {
-                    setShowServerConfigModal(true);
-                    setDropdownOpen(false);
-                  }}
-                  className="flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black transition duration-200 ease-in-out hover:bg-gray-200"
+                  onClick={toggleTheme}
+                  className="flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black dark:text-white transition duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
-                  <i className="bx bx-server mr-2 text-[16px]"></i> Server Configuration
-                </button>
-
-                <button
-                  onClick={() =>
-                    alert("The dark mode feature is still under development.")
-                  }
-                  className="flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black transition duration-200 ease-in-out hover:bg-gray-200"
-                >
-                  <i className="bx bx-moon mr-2 text-[16px]"></i> Dark Mode
+                  <i className={`bx ${isDark ? 'bx-sun' : 'bx-moon'} mr-2 text-[16px]`}></i> {isDark ? 'Light Mode' : 'Dark Mode'}
                 </button>
 
                 <button
                   onClick={() => setShowLogoutModal(true)}
-                  className="flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black transition duration-200 ease-in-out hover:bg-gray-200"
+                  className="flex w-full cursor-pointer items-center justify-start rounded-sm px-4 py-3 text-left text-[14px] text-black dark:text-white transition duration-200 ease-in-out hover:bg-gray-200 dark:hover:bg-gray-800"
                 >
                   <i className="bx bx-arrow-out-right-square-half mr-2 text-[16px]"></i>{" "}
                   {isLoggingOut ? (
@@ -628,15 +624,15 @@ const AdminHeader = ({ title }) => {
                     )}
                   </div>
                 </div>
-                <div>
-                  <div className="text-lg font-semibold text-gray-800">
+<div>
+                  <div className="text-lg font-semibold text-gray-800 dark:text-white">
                     {userInfo?.fullName ? (
                       userInfo.fullName
                     ) : (
-                      <span className="inline-block h-5 w-32 animate-pulse rounded bg-gray-200"></span>
+                      <span className="inline-block h-5 w-32 animate-pulse rounded bg-gray-200 dark:bg-gray-700"></span>
                     )}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
                     {userInfo?.email ? (
                       userInfo.email
                     ) : (
@@ -894,14 +890,14 @@ const AdminHeader = ({ title }) => {
         </>
       )}
 
-      {/* Logout Confirmation Modal */}
+{/* Logout Confirmation Modal */}
       {showLogoutModal && (
         <div className="lightbox-bg fixed inset-0 z-[200] flex items-center justify-center">
           <div
             ref={logoutModalRef}
-            className="animate-fade-in-up flex w-[90vw] max-w-xs flex-col items-center rounded-2xl bg-white p-6 shadow-xl"
+            className="animate-fade-in-up flex w-[90vw] max-w-xs flex-col items-center rounded-2xl bg-white dark:bg-black p-6 shadow-xl"
           >
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-50">
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 dark:bg-orange-900/30">
               <svg
                 width="36"
                 height="36"
@@ -917,8 +913,8 @@ const AdminHeader = ({ title }) => {
                 />
               </svg>
             </div>
-            <div className="mb-1 text-[20px] font-bold">Log out</div>
-            <div className="mb-5 text-center text-[14px] text-gray-500">
+            <div className="mb-1 text-[20px] font-bold text-gray-900 dark:text-white">Log out</div>
+            <div className="mb-5 text-center text-[14px] text-gray-500 dark:text-gray-400">
               Are you sure you want to log out?
             </div>
             <button
@@ -935,7 +931,7 @@ const AdminHeader = ({ title }) => {
               )}
             </button>
             <button
-              className="border-color w-full cursor-pointer rounded-lg border py-2 text-[16px] font-semibold text-gray-800 transition hover:bg-gray-200"
+              className="border-color w-full cursor-pointer rounded-lg border py-2 text-[16px] font-semibold text-gray-800 dark:text-white transition hover:bg-gray-200 dark:hover:bg-gray-800"
               onClick={() => setShowLogoutModal(false)}
               disabled={isLoggingOut}
             >
@@ -944,18 +940,6 @@ const AdminHeader = ({ title }) => {
           </div>
         </div>
       )}
-
-      <ServerConfigModal
-        isOpen={showServerConfigModal}
-        onClose={() => setShowServerConfigModal(false)}
-        onSave={(url) => setCurrentApiUrl(url)}
-      />
-
-      <ServerConfigModal
-        isOpen={showServerConfigModal}
-        onClose={() => setShowServerConfigModal(false)}
-        onSave={(url) => setCurrentApiUrl(url)}
-      />
 
       <Toast message={toast.message} type={toast.type} show={toast.show} />
     </div>

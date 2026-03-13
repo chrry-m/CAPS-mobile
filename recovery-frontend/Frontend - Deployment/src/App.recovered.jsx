@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Layout from "./components/layout";
@@ -12,8 +13,6 @@ import FacultyDashboard from "./pages/FacultyDashboard";
 import ProgramChairDashboard from "./pages/ProgramChairDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AssoDeanDashboard from "./pages/AssoDeanDashboard";
-
-import Leaderboard from "./pages/Leaderboard";
 
 import Users from "./pages/Users";
 
@@ -29,6 +28,7 @@ import PracticeExamPreview from "./pages/PracticeExamPreview";
 import ResetPasswordPage from "./components/resetPassForm";
 import ForgotPasswordForm from "./components/forgotPassForm";
 import PracticeExamInfo from "./pages/PracticeExamInfo";
+import Leaderboard from "./pages/Leaderboard";
 
 import TestLogin from "./tests/testLogin";
 
@@ -37,8 +37,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/auth/google/callback" element={<Login />} />
-        <Route path="/auth/facebook/callback" element={<Login />} />
         <Route path="/testLogin" element={<TestLogin />} />
 
         <Route path="/register" element={<Register />} />
@@ -83,7 +81,6 @@ function App() {
           <Route path="content" element={<PracticeExamInfo />} />
         </Route>
 
-        {/* Student Dashboard Route */}
         <Route
           path="/student-dashboard"
           element={<ProtectedRoute element={<Layout />} />}
@@ -92,16 +89,13 @@ function App() {
           <Route path="dashboard" element={<StudentDashboard />} />
         </Route>
 
-        {/* Leaderboard Route */}
         <Route
           path="/leaderboard"
           element={<ProtectedRoute element={<Layout />} />}
         >
           <Route index element={<Leaderboard />} />
-          <Route path="content" element={<Leaderboard />} />
         </Route>
 
-        {/* Faculty Routes */}
         <Route
           path="/faculty/subjects"
           element={<ProtectedRoute element={<Layout />} />}

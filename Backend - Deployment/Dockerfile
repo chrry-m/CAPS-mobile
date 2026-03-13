@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_mysql gd
 
 # Enable Apache rewrite module (Laravel requires this)
@@ -24,8 +25,6 @@ WORKDIR /var/www/html
 
 # Copy Laravel project files into the container
 COPY . .
-# Ensure .env exists
-RUN cp .env.example .env || cp .env .env
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -43,9 +42,4 @@ RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
 # Set entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["apache2-foreground"]
-
-# Expose port 80
-EXPOSE 80
-# Start Apache
 CMD ["apache2-foreground"]

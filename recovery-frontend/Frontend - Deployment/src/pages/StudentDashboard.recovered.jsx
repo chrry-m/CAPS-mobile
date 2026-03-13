@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import Button from "../components/button";
 import { useState, useEffect, useRef } from "react";
 import { getApiUrl } from "../utils/config";
+import SubjectCard from "../components/StudentSubjectCard";
 import DashboardCarousel from "../components/DashboardCarousel";
-import StudentSubjectCard from "../components/StudentSubjectCard";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
@@ -17,10 +18,12 @@ const StudentDashboard = () => {
   const [subjectError, setSubjectError] = useState("");
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const apiUrl = getApiUrl();
-const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [examStarted, setExamStarted] = useState(false);
   const [ongoingExam, setOngoingExam] = useState(null);
-  const [loadingExamPreview, setLoadingExamPreview] = useState(false);
+
+  // New state for subject cards
+  const [subjectGroups, setSubjectGroups] = useState([]);
 
   const resetForm = () => {
     setSubjectInput("");
@@ -83,7 +86,7 @@ const [showForm, setShowForm] = useState(false);
     }, 200);
   };
 
-// Fetch available subjects when component mounts
+  // Fetch available subjects when component mounts
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
@@ -92,18 +95,9 @@ const [showForm, setShowForm] = useState(false);
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        
-        if (!response.ok) {
-          console.error("Failed to fetch subjects:", response.status);
-          setError("Failed to load subjects");
-          return;
-        }
-        
         const data = await response.json();
-        if (data.data && Array.isArray(data.data)) {
+        if (data.data) {
           setSubjects(data.data);
-        } else if (Array.isArray(data)) {
-          setSubjects(data);
         }
       } catch (err) {
         console.error("Error fetching subjects:", err);
@@ -112,6 +106,27 @@ const [showForm, setShowForm] = useState(false);
     };
 
     fetchSubjects();
+  }, [apiUrl]);
+
+  // Fetch subjects for cards view (using the flat list)
+  useEffect(() => {
+    const fetchDashboardSubjects = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/student/practice-subjects`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        const data = await response.json();
+        if (data.data) {
+          setSubjectGroups(data.data); // Keep state name for compatibility, but it holds flat objects now
+        }
+      } catch (err) {
+        console.error("Error fetching dashboard subjects:", err);
+      }
+    };
+
+    fetchDashboardSubjects();
   }, [apiUrl]);
 
   // Check for ongoing exam when component mounts
@@ -298,7 +313,7 @@ const [showForm, setShowForm] = useState(false);
         if (response.status === 404) {
           throw new Error(
             data.message ||
-              "Subject not found or no questions available for this subject.",
+            "Subject not found or no questions available for this subject.",
           );
         }
         throw new Error(data.message || "Failed to generate exam");
@@ -359,42 +374,79 @@ const [showForm, setShowForm] = useState(false);
     }
   };
 
-const handleSubjectSelect = (subject) => {
+  const handleSubjectSelect = (subject) => {
     setSubjectInput(subject.subjectName);
     setSubjectID(subject.subjectID);
     setShowSuggestions(false); // Close the suggestions dropdown
   };
 
-  const handleSubjectClick = async (subject) => {
-    setLoadingExamPreview(true);
+  /**
+   * Reusable function to start the exam flow by fetching questions 
+   * and navigating to the preview page.
+   */
+  const startExamFlow = async (id, name) => {
+    setLoading(true);
+    setError("");
+    setSubjectError("");
+
+    // Clear all existing exam data before starting new exam
+    const clearExistingExamData = () => {
+      const keys = Object.keys(localStorage);
+      const examKeys = keys.filter((key) => key.startsWith("exam_"));
+      examKeys.forEach((key) => {
+        const keysToRemove = [
+          key,
+          `${key}_bookmarks`,
+          `${key}_timer`,
+          `${key}_completed`,
+          `${key}_last_question`,
+          `${key}_last_position`,
+          `${key}_settings`,
+          `${key}_exam_data`,
+        ];
+        keysToRemove.forEach((k) => localStorage.removeItem(k));
+      });
+    };
+
+    clearExistingExamData();
+
     try {
       const response = await fetch(
-        `${apiUrl}/api/practice-exam/generate/${subject.subjectID}`,
+        `${apiUrl}/api/practice-exam/generate/${id}`,
         {
+          method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
-      
+
+      const data = await response.json();
+
       if (!response.ok) {
         if (response.status === 403) {
           throw new Error("Practice exam is not enabled for this subject.");
         }
         if (response.status === 404) {
-          throw new Error("No questions available for this subject.");
+          throw new Error(
+            data.message ||
+            "Subject not found or no questions available for this subject.",
+          );
         }
-        throw new Error("Failed to generate exam");
+        throw new Error(data.message || "Failed to generate exam");
       }
-      
-      const data = await response.json();
-      
+
       if (!data.questions || data.questions.length === 0) {
-        throw new Error("No questions available for this subject.");
+        throw new Error(
+          "No questions available for this subject. Please try another subject.",
+        );
       }
-      
-      const examKey = `exam_${subject.subjectID}_${Date.now()}`;
-      
+
+      // Generate a unique key for this exam attempt
+      const examKey = `exam_${id}_${data.questions.map((q) => q.questionID).join("_")}`;
+
+      // Store the complete exam data in localStorage
       localStorage.setItem(
         `${examKey}_exam_data`,
         JSON.stringify({
@@ -407,68 +459,125 @@ const handleSubjectSelect = (subject) => {
             enableTimer: data.enableTimer,
             durationMinutes: data.durationMinutes,
           },
-        })
+        }),
       );
-      
+
+      // Navigate to /exam-preview
       navigate("/exam-preview", {
-        state: {
-          subjectID: subject.subjectID,
-          subjectName: subject.subjectName,
-          examData: {
-            questions: data.questions,
-            totalPoints: data.totalPoints,
-            enableTimer: data.enableTimer,
-            durationMinutes: data.durationMinutes,
-            subjectName: data.subjectName,
-            examSettings: {
-              enableTimer: data.enableTimer,
-              durationMinutes: data.durationMinutes,
-            },
-          },
-          examKey,
-        },
+        state: { subjectID: id, examData: data, examKey },
       });
     } catch (err) {
-      console.error("Error loading exam:", err);
-      alert(err.message || "Unable to load exam. Please try again.");
+      console.error("Exam generation error:", err);
+      setError(err.message || "An unknown error occurred.");
     } finally {
-      setLoadingExamPreview(false);
+      setLoading(false);
     }
   };
 
+  // Handle card click — go straight to exam flow
+  const handleCardClick = (subject) => {
+    startExamFlow(subject.subjectID, subject.subjectName);
+  };
+
   return (
-    <div className="font-inter mt-2 sm:mt-4 text-center text-gray-500">
-      <div className="px-2 sm:px-4">
+    <div className="font-inter mt-10 text-center text-slate-600 dark:text-slate-300">
+      {/* Draft
+      {ongoingExam && (
+        <div className="mb-6">
+          <div className="mx-auto max-w-md rounded-lg bg-yellow-50 p-4 shadow-sm">
+            <h3 className="mb-2 text-[16px] font-semibold text-yellow-800">
+              Exam in Progress
+            </h3>
+            <p className="mb-4 text-[12px] text-yellow-700">
+              You have an unfinished practice exam for Subject{" "}
+              {ongoingExam.subjectID}. Your progress has been saved.
+            </p>
+
+            <div className="flex justify-center">
+              <button
+                onClick={handleContinueExam}
+                className="font-inter mt-3 flex items-center justify-center gap-2 text-[14px] text-gray-700 dark:text-gray-300"
+              >
+                <span className="hover:underline">Continue Exam</span>
+                <i className="bx bx-chevron-right text-[18px]"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+        */}
+
+      <div className="mx-auto flex w-full max-w-md flex-col gap-4 sm:gap-[clamp(1rem,3.5vw,1.35rem)] pb-8">
         <DashboardCarousel />
+
+        <section className="flex flex-col gap-3 sm:gap-[clamp(0.85rem,3vw,1rem)]">
+          <div className="px-0.5">
+            <h2 className="text-[clamp(1.35rem,4.8vw,1.7rem)] font-semibold tracking-tight text-slate-900 dark:text-white">
+              Subjects
+            </h2>
+          </div>
+
+          {subjectGroups.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {subjectGroups.map((subject) => (
+                <SubjectCard
+                  key={subject.subjectID}
+                  baseName={subject.subjectName}
+                  subjectImage={null}
+                  onClick={() => handleCardClick(subject)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex min-h-[220px] flex-col items-center justify-center rounded-[30px] border border-slate-200/70 bg-white/88 px-8 py-10 text-center shadow-[0_24px_44px_rgba(148,163,184,0.16)] dark:border-white/8 dark:bg-slate-950/92 dark:shadow-[0_24px_44px_rgba(2,6,23,0.28)]">
+              <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-orange-500/12 text-orange-500 dark:bg-orange-500/15 dark:text-orange-400">
+                <i className="bx bx-book-reader text-3xl"></i>
+              </div>
+              <h3 className="mb-2 text-[clamp(1.2rem,4.3vw,1.3rem)] font-semibold tracking-tight text-slate-950 dark:text-white">
+                No Subjects Yet
+              </h3>
+              <p className="max-w-[16rem] text-[clamp(0.92rem,2.9vw,0.98rem)] leading-6 text-slate-500 dark:text-slate-400">
+                When you're enrolled in subjects, they will appear here.
+              </p>
+            </div>
+          )}
+        </section>
       </div>
 
-      {loadingExamPreview && (
-        <div className="mt-4">
-          <span className="loader"></span>
-          <p className="text-sm mt-2">Loading exam...</p>
+      {loading && (
+        <div className="fixed inset-0 z-110 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm dark:bg-slate-950/72">
+          <span className="loader mb-4"></span>
+          <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+            Preparing your questions...
+          </p>
         </div>
       )}
 
-      <div className="mt-4 sm:mt-6 px-3 sm:px-4">
-        <h2 className="text-left text-base sm:text-lg font-semibold text-gray-700 dark:text-white">
-          Available Subjects
-        </h2>
-        <div className="mt-3 sm:mt-4 flex flex-col gap-3 sm:gap-4">
-          {subjects.length > 0 ? (
-            subjects.map((subject) => (
-              <StudentSubjectCard
-                key={subject.subjectID}
-                baseName={subject.subjectName}
-                subjectImage={subject.imageUrl}
-                onClick={() => handleSubjectClick(subject)}
-                disabled={loadingExamPreview}
-              />
-            ))
-          ) : (
-            <p className="text-sm sm:text-base text-gray-500">No subjects available</p>
-          )}
+      {error && (
+        <div
+          className="fixed inset-0 z-110 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setError("")}
+        >
+          <div
+            className="w-full max-w-sm rounded-[28px] border border-slate-200/80 bg-white p-6 shadow-2xl dark:border-white/8 dark:bg-slate-950"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-red-500/10 text-red-500 dark:bg-red-500/12 dark:text-red-400">
+              <i className="bx bx-error-alt text-2xl"></i>
+            </div>
+            <h3 className="mb-2 text-lg font-bold text-slate-950 dark:text-white">
+              Exam preparation issue
+            </h3>
+            <p className="mb-6 text-sm leading-6 text-slate-500 dark:text-slate-400">{error}</p>
+            <button
+              onClick={() => setError("")}
+              className="w-full rounded-2xl bg-slate-100 py-3 text-sm font-bold text-slate-900 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+            >
+              Close
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

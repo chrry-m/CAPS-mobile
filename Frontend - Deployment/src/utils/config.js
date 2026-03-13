@@ -1,41 +1,47 @@
+// ============================================
+// SERVER CONFIGURATION - CHANGE THESE TO UPDATE SERVER
+// ============================================
+
+const DEFAULT_LOCAL_SERVER = 'http://100.91.44.24:8005';
+const DEFAULT_TEST_SERVER = 'http://18.142.190.113:8000';
+
 const API_BASE_URL_KEY = 'apiBaseUrl';
 
-// Get the base API URL (without /api suffix)
-export const getApiBaseUrl = () => {
-  return localStorage.getItem(API_BASE_URL_KEY) || '';
+// Reads the saved API base URL and falls back to the default local server.
+const getStoredApiUrl = () => {
+  if (typeof window === 'undefined') return DEFAULT_LOCAL_SERVER;
+  return localStorage.getItem(API_BASE_URL_KEY) || DEFAULT_LOCAL_SERVER;
 };
 
-// Get the full API URL (falls back to env variable if not set in localStorage)
-// Strips trailing /api to prevent double /api in URLs
+// Returns the active backend base URL used by frontend requests.
 export const getApiUrl = () => {
-  let baseUrl = localStorage.getItem(API_BASE_URL_KEY) || import.meta.env.VITE_API_BASE_URL || '';
-  // Remove trailing /api if present (to prevent double /api)
-  baseUrl = baseUrl.replace(/\/api$/, '');
-  return baseUrl;
+  return getStoredApiUrl();
 };
 
-// Set API URL for local development (IP:port)
-// Automatically strips /api suffix if present
-export const setApiBaseUrl = (ip, port = '8005') => {
-  let cleanIp = ip.replace(/\/api$/, '');
-  const url = `http://${cleanIp}:${port}`;
+// Keeps the old helper name working while all callers use the same source.
+export const getApiBaseUrl = () => {
+  return getApiUrl();
+};
+
+// Server setup is now always considered available because the app ships with defaults.
+export const hasApiConfig = () => {
+  return true;
+};
+
+// Stores a local-network server target using an IP and port pair.
+export const setApiBaseUrl = (ip, port) => {
+  const url = `http://${ip}:${port}`;
   localStorage.setItem(API_BASE_URL_KEY, url);
   return url;
 };
 
-// Set custom API URL (for production/test servers)
-// Automatically strips /api suffix if present
+// Stores a fully custom backend URL without rebuilding the app.
 export const setCustomApiUrl = (url) => {
-  // Remove trailing slash and /api if present
-  let cleanUrl = url.replace(/\/$/, '').replace(/\/api$/, '');
-  localStorage.setItem(API_BASE_URL_KEY, cleanUrl);
-  return cleanUrl;
+  localStorage.setItem(API_BASE_URL_KEY, url);
+  return url;
 };
 
-export const hasApiConfig = () => {
-  return !!localStorage.getItem(API_BASE_URL_KEY);
-};
-
+// Clears the saved backend override so the default server is used again.
 export const clearApiConfig = () => {
   localStorage.removeItem(API_BASE_URL_KEY);
 };
