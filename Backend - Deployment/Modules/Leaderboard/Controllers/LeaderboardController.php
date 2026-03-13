@@ -1,0 +1,79 @@
+<?php
+
+namespace Modules\Leaderboard\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Modules\Users\Models\User;
+
+class LeaderboardController extends Controller
+{
+    public function index(Request $request)
+    {
+        $request->validate([
+            'program' => 'nullable|integer|exists:programs,programID',
+            'subject' => 'nullable|integer|exists:subjects,subjectID',
+        ]);
+
+        $query = DB::table('practice_exam_results')
+            ->select(
+                'userID',
+                DB::raw('AVG(percentage) as avg_accuracy'),
+                DB::raw('COUNT(*) as total_exams')
+            )
+            ->whereNotNull('userID')
+            ->groupBy('userID');
+
+        if ($request->has('subject') && $request->subject) {
+            $query->where('subjectID', $request->subject);
+        }
+
+        $results = $query->get();
+
+        $userIds = $results->pluck('userID')->toArray();
+        
+        $users = User::whereIn('userID', $userIds)
+            ->with(['program', 'role'])
+            ->get()
+            ->keyBy('userID');
+
+        if ($request->has('program') && $request->program) {
+            $users = $users->where('programID', $request->program);
+        }
+
+        $maxVolume = $results->max('total_exams') ?: 1;
+
+        $leaderboard = $results->filter(function ($result) use ($users) {
+            return $users->has($result->userID);
+        })->map(function ($result) use ($users, $maxVolume) {
+            $user = $users->get($result->userID);
+            
+            $normalizedVolume = ($result->total_exams / $maxVolume) * 100;
+            $score = (0.7 * $result->avg_accuracy) + (0.3 * $normalizedVolume);
+
+            return [
+                'userID' => $user->userID,
+                'userCode' => $user->userCode,
+                'firstName' => $user->firstName,
+                'lastName' => $user->lastName,
+                'program' => $user->program ? $user->program->programName : null,
+                'role' => $user->role ? $user->role->roleName : null,
+                'avg_accuracy' => round($result->avg_accuracy, 2),
+                'total_exams' => $result->total_exams,
+                'score' => round($score, 2),
+            ];
+        })->sortByDesc('score')->values();
+
+        $rank = 1;
+        $leaderboard = $leaderboard->map(function ($entry) use (&$rank) {
+            $entry['rank'] = $rank++;
+            return $entry;
+        });
+
+        return response()->json([
+            'leaderboard' => $leaderboard,
+            'total' => $leaderboard->count()
+        ], 200);
+    }
+}

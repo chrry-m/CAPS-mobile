@@ -18,6 +18,9 @@ use Modules\Print\Controllers\PrintController;
 use Modules\Subjects\Controllers\YearLevelController;
 use Modules\PracticeExams\Controllers\PersonalExamSettingController;
 use Modules\Users\Controllers\StudentTeacherEnrollmentController;
+use Modules\Leaderboard\Controllers\LeaderboardController;
+use Modules\Users\Controllers\SystemNotificationController;
+use Modules\Users\Controllers\SocialAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +33,24 @@ Route::get('/roles', [RoleController::class, 'indexAvailableRoles']);
 Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [PasswordResetController::class, 'reset']);
 Route::get('/app-version', [AppController::class, 'getVersion']);
+
+/*
+|--------------------------------------------------------------------------
+| Social Authentication Routes (No authentication required)
+|--------------------------------------------------------------------------
+*/
+Route::get('/auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle']);
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+Route::post('/auth/social/verify-link', [SocialAuthController::class, 'verifyLink']);
+Route::get('/auth/facebook/redirect', [SocialAuthController::class, 'redirectToFacebook']);
+Route::get('/auth/facebook/callback', [SocialAuthController::class, 'handleFacebookCallback']);
+
+/*
+|--------------------------------------------------------------------------
+| Leaderboard Route (No authentication required)
+|--------------------------------------------------------------------------
+*/
+Route::get('/leaderboard', [LeaderboardController::class, 'index']);
 
 /*
 |--------------------------------------------------------------------------
@@ -109,6 +130,9 @@ Route::middleware(['auth:sanctum', TokenExpirationMiddleware::class, 'role:2,3,4
 
     // Image upload for subjects (admin/faculty only)
     Route::post('/subjects/{id}/upload-image', [SubjectController::class, 'uploadSubjectImage']);
+
+    // System notification for bulk updates (Dean and Associate Dean only)
+    Route::post('/admin/system/notify-update', [SystemNotificationController::class, 'sendSystemUpdate']);
 });
 
 /*
