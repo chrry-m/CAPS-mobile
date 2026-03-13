@@ -4,7 +4,7 @@ import Header from "./header";
 import BottomNav from "./BottomNav";
 import { Outlet, useLocation } from "react-router-dom";
 
-// Main Layout
+// Shared app shell that swaps sidebar vs. student bottom navigation and preserves the selected subject.
 const Layout = () => {
   const [role_id, setRoleId] = useState(null);
   // Load selectedSubject from localStorage on mount

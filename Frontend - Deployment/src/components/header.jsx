@@ -20,31 +20,37 @@ const AVATAR_COLORS = [
   "bg-teal-600",
   "bg-indigo-600",
 ];
+
+// Picks a random avatar color the first time a user profile is loaded on this device.
 function getRandomAvatarColor() {
   return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)];
 }
 
+// Builds the storage key used to persist each user's avatar color locally.
 function getAvatarColorKey(userInfo) {
   // Prefer email, fallback to userCode, fallback to 'default'
   return userInfo?.email || userInfo?.userCode || "default";
 }
 
+// Reads the saved avatar color for the current user, if one already exists.
 function getPersistedAvatarColor(userInfo) {
   const key = getAvatarColorKey(userInfo);
   return localStorage.getItem("avatarColor_" + key);
 }
 
+// Saves the chosen avatar color so the same user keeps the same badge color.
 function setPersistedAvatarColor(userInfo, color) {
   const key = getAvatarColorKey(userInfo);
   localStorage.setItem("avatarColor_" + key, color);
 }
 
+// Removes the stored avatar color when the user logs out.
 function clearPersistedAvatarColor(userInfo) {
   const key = getAvatarColorKey(userInfo);
   localStorage.removeItem("avatarColor_" + key);
 }
 
-// Web App Header
+// Shared protected-page header for profile, help, theme, and logout actions.
 const AdminHeader = ({ title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);

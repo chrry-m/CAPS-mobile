@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import QuestionListModal from "../components/QuestionListModal";
 import { getApiUrl } from "../utils/config";
 
+// Preview-only timeout modal that summarizes progress without submitting anything to the backend.
 const TimerCompletionModal = ({
   isOpen,
   onClose,
@@ -54,6 +55,7 @@ const TimerCompletionModal = ({
   );
 };
 
+// Loads a read-only practice exam preview so users can inspect the flow before taking the real attempt.
 const PracticeExamPreview = () => {
   const { subjectID } = useParams();
   const [examData, setExamData] = useState(null);
@@ -114,12 +116,14 @@ const PracticeExamPreview = () => {
   }, [subjectID]);
 
   useEffect(() => {
+    // Mirrors the backend timer setting into a seconds counter for the preview UI.
     if (examData?.enableTimer) {
       setSecondsLeft(examData.durationMinutes * 60);
     }
   }, [examData]);
 
   useEffect(() => {
+    // Counts down the preview timer and opens the completion modal when time reaches zero.
     if (!examData?.enableTimer || secondsLeft === null) return;
     if (secondsLeft <= 0) return;
     const interval = setInterval(() => {
@@ -136,6 +140,7 @@ const PracticeExamPreview = () => {
   }, [examData?.enableTimer, secondsLeft]);
 
   useEffect(() => {
+    // Closes any open image viewer when the user changes questions.
     setIsQuestionImageModalOpen(false);
     setIsChoiceImageModalOpen(false);
     setSelectedImageUrl(null);
@@ -153,6 +158,7 @@ const PracticeExamPreview = () => {
 
   const totalQuestions = examData.questions.length;
 
+  // Stores the selected choice per question so the preview can show progress and completion states.
   const handleSelectAnswer = (questionID, choiceID) => {
     setAnswers((prev) => ({
       ...prev,
@@ -160,18 +166,21 @@ const PracticeExamPreview = () => {
     }));
   };
 
+  // Moves to the previous question when the user is not already on the first item.
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
+  // Moves to the next question when the user has not reached the end of the preview.
   const handleNextQuestion = () => {
     if (currentQuestionIndex < examData.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     }
   };
 
+  // Removes the answer for the active question without affecting the rest of the preview state.
   const handleClearAnswer = () => {
     const currentQuestionId =
       examData.questions[currentQuestionIndex].questionID;
@@ -182,6 +191,7 @@ const PracticeExamPreview = () => {
     });
   };
 
+  // Computes the answered percentage for the progress bar.
   const calculateProgress = () => {
     const answeredCount = examData.questions.filter(
       (question) => answers[question.questionID] !== undefined,
@@ -191,17 +201,20 @@ const PracticeExamPreview = () => {
 
   const progressPercentage = calculateProgress();
 
+  // Detects when every question already has a selected choice.
   const areAllQuestionsAnswered = () => {
     return examData.questions.every(
       (question) => answers[question.questionID] !== undefined,
     );
   };
 
+  // Jumps to a chosen question from the question list modal.
   const handleQuestionClick = (index) => {
     setCurrentQuestionIndex(index);
     setIsQuestionListOpen(false);
   };
 
+  // Toggles a question in the bookmarked list for later review inside the modal.
   const handleToggleBookmark = (questionId) => {
     setBookmarkedQuestions((prev) => {
       if (prev.includes(questionId)) {
@@ -212,6 +225,7 @@ const PracticeExamPreview = () => {
     });
   };
 
+  // Converts the raw timer value into HH:MM:SS for any future timer label reuse.
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -221,6 +235,7 @@ const PracticeExamPreview = () => {
       .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
+  // Closes the timeout summary because preview mode never submits answers to the backend.
   const handleTimerCompletion = () => {
     setShowTimerCompletionModal(false);
     // Just show results locally

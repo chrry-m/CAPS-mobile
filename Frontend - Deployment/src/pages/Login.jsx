@@ -11,6 +11,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaSun, FaMoon } from "react-icons/fa";
 import { useTheme } from "../contexts/ThemeContext";
 
+// Handles credential login, social login callbacks, and role-based post-login navigation.
 export default function LoginPage() {
   const [idCode, setIdCode] = useState("");
   const [password, setPassword] = useState("");
@@ -26,6 +27,7 @@ export default function LoginPage() {
   const apiUrl = getApiUrl();
   const handledSocialAuth = useRef(false);
 
+  // Sends authenticated users to the dashboard that matches their role ID.
   const redirectUserByRole = (user) => {
     const roleId = Number(user?.roleID ?? user?.roleId);
 
@@ -51,6 +53,7 @@ export default function LoginPage() {
     }
   };
 
+  // Removes OAuth callback query params so refreshes do not re-run social login handling.
   const clearSocialAuthParams = () => {
     const url = new URL(window.location.href);
     ["social_token", "social_error", "provider", "message"].forEach((key) =>
@@ -64,6 +67,7 @@ export default function LoginPage() {
     );
   };
 
+  // Starts the backend OAuth redirect and tells the backend which frontend origin to return to.
   const handleSocialLoginRedirect = (provider) => {
     const frontendUrl = window.location.origin;
     window.location.href = `${apiUrl}/api/auth/${provider}/redirect?frontend_url=${encodeURIComponent(frontendUrl)}`;
@@ -99,6 +103,7 @@ export default function LoginPage() {
       return;
     }
 
+    // Finishes the OAuth callback by saving the token, loading the profile, and reusing the normal dashboard routing.
     const completeSocialLogin = async () => {
       setIsLogIn(true);
 
@@ -141,6 +146,7 @@ export default function LoginPage() {
     completeSocialLogin();
   }, [apiUrl, navigate, showToast]);
 
+  // Authenticates with the backend using CAPS credentials, then stores the token and routes by role.
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");

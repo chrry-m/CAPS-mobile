@@ -11,6 +11,7 @@ use Modules\Users\Models\User;
 
 class SocialAuthController extends Controller
 {
+    // Starts the Google OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToGoogle(Request $request)
     {
         $response = Socialite::driver('google')->stateless()->redirect();
@@ -23,6 +24,7 @@ class SocialAuthController extends Controller
         return $response;
     }
 
+    // Handles the Google provider callback and always sends the browser back to the frontend.
     public function handleGoogleCallback()
     {
         try {
@@ -38,6 +40,7 @@ class SocialAuthController extends Controller
         }
     }
 
+    // Starts the Facebook OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToFacebook(Request $request)
     {
         $response = Socialite::driver('facebook')->stateless()->redirect();
@@ -50,6 +53,7 @@ class SocialAuthController extends Controller
         return $response;
     }
 
+    // Handles the Facebook provider callback and always sends the browser back to the frontend.
     public function handleFacebookCallback()
     {
         try {
@@ -65,6 +69,7 @@ class SocialAuthController extends Controller
         }
     }
 
+    // Reuses an existing CAPS account by provider ID first, then links by email when safe.
     private function handleOAuthUser($oauthUser, $provider)
     {
         $providerId = $provider . '_id';
@@ -99,6 +104,7 @@ class SocialAuthController extends Controller
         return $this->redirectToFrontendSuccess($user, $provider);
     }
 
+    // Creates a Sanctum token and returns the user to the frontend callback route with success params.
     private function redirectToFrontendSuccess(User $user, string $provider)
     {
         Auth::login($user);
@@ -110,6 +116,7 @@ class SocialAuthController extends Controller
         ]))->withoutCookie('oauth_frontend_url');
     }
 
+    // Returns the user to the frontend with a provider-specific error code and message.
     private function redirectToFrontendError(string $code, string $message, string $provider)
     {
         return redirect()->away($this->buildFrontendUrl("/auth/{$provider}/callback", [
@@ -119,6 +126,7 @@ class SocialAuthController extends Controller
         ]))->withoutCookie('oauth_frontend_url');
     }
 
+    // Builds a frontend URL from the resolved base URL, callback path, and query parameters.
     private function buildFrontendUrl(string $path = '/', array $params = []): string
     {
         $baseUrl = rtrim($this->resolveFrontendBaseUrl(), '/');
@@ -130,6 +138,7 @@ class SocialAuthController extends Controller
             : "{$baseUrl}{$normalizedPath}";
     }
 
+    // Chooses the safest frontend base URL from the OAuth cookie, config, or a local fallback guess.
     private function resolveFrontendBaseUrl(): string
     {
         $cookieFrontendUrl = request()->cookie('oauth_frontend_url');
@@ -147,6 +156,7 @@ class SocialAuthController extends Controller
         return $this->guessFrontendUrl();
     }
 
+    // Stores an approved frontend URL in a short-lived cookie so the provider callback can reuse it.
     private function makeFrontendUrlCookie(Request $request)
     {
         $frontendUrl = $request->query('frontend_url');
@@ -168,6 +178,7 @@ class SocialAuthController extends Controller
         );
     }
 
+    // Limits frontend redirects to known hosts so OAuth callbacks cannot be turned into open redirects.
     private function isAllowedFrontendUrl(?string $frontendUrl): bool
     {
         if (!$frontendUrl || !filter_var($frontendUrl, FILTER_VALIDATE_URL)) {
@@ -191,6 +202,7 @@ class SocialAuthController extends Controller
         ]), true);
     }
 
+    // Provides a final localhost-style fallback when no trusted frontend URL was supplied.
     private function guessFrontendUrl(): string
     {
         $request = request();
@@ -200,6 +212,7 @@ class SocialAuthController extends Controller
         return "{$scheme}://{$host}:8085";
     }
 
+    // Links an OAuth provider to an already authenticated CAPS account after token verification.
     public function verifyLink(Request $request)
     {
         $request->validate([

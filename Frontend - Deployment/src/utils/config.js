@@ -7,34 +7,41 @@ const DEFAULT_TEST_SERVER = 'http://18.142.190.113:8000';
 
 const API_BASE_URL_KEY = 'apiBaseUrl';
 
+// Reads the saved API base URL and falls back to the default local server.
 const getStoredApiUrl = () => {
   if (typeof window === 'undefined') return DEFAULT_LOCAL_SERVER;
   return localStorage.getItem(API_BASE_URL_KEY) || DEFAULT_LOCAL_SERVER;
 };
 
+// Returns the active backend base URL used by frontend requests.
 export const getApiUrl = () => {
   return getStoredApiUrl();
 };
 
+// Keeps the old helper name working while all callers use the same source.
 export const getApiBaseUrl = () => {
   return getApiUrl();
 };
 
+// Server setup is now always considered available because the app ships with defaults.
 export const hasApiConfig = () => {
   return true;
 };
 
+// Stores a local-network server target using an IP and port pair.
 export const setApiBaseUrl = (ip, port) => {
   const url = `http://${ip}:${port}`;
   localStorage.setItem(API_BASE_URL_KEY, url);
   return url;
 };
 
+// Stores a fully custom backend URL without rebuilding the app.
 export const setCustomApiUrl = (url) => {
   localStorage.setItem(API_BASE_URL_KEY, url);
   return url;
 };
 
+// Clears the saved backend override so the default server is used again.
 export const clearApiConfig = () => {
   localStorage.removeItem(API_BASE_URL_KEY);
 };

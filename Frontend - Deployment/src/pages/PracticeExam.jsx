@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import QuestionListModal from "../components/QuestionListModal";
 import { getApiUrl } from "../utils/config";
 
+// Timeout modal that summarizes answered work before forcing the live exam submission flow.
 const TimerCompletionModal = ({
   isOpen,
   onClose,
@@ -57,6 +58,7 @@ const TimerCompletionModal = ({
   );
 };
 
+// Runs the live practice exam, tracks answer state, and submits a normalized payload to the backend.
 const PracticeExam = ({ closeModal }) => {
   const [error, setError] = useState("");
   const [answers, setAnswers] = useState({});
@@ -257,6 +259,7 @@ const PracticeExam = ({ closeModal }) => {
   const isFinalQuestion = currentQuestionIndex === examData.questions.length - 1;
   const hasCurrentAnswer = answers[currentQuestionId] !== undefined;
 
+  // Stores the selected choice for a question and clears any blocking validation message.
   const handleSelectAnswer = (questionID, choiceID) => {
     setError("");
     setAnswers((prev) => ({
@@ -265,18 +268,21 @@ const PracticeExam = ({ closeModal }) => {
     }));
   };
 
+  // Moves to the previous question when the user is not already at the start.
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
+  // Moves to the next question when there are still items remaining.
   const handleNextQuestion = () => {
     if (currentQuestionIndex < examData.questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     }
   };
 
+  // Submits every question with either a choice ID or null and blocks manual submit if the last item is unanswered.
   const handleSubmitAnswers = async ({ bypassFinalAnswerCheck = false } = {}) => {
     const finalQuestion = examData.questions[examData.questions.length - 1];
     const isFinalQuestionAnswered =
@@ -320,6 +326,7 @@ const PracticeExam = ({ closeModal }) => {
       }
 
       // Clear ALL exam-related data from localStorage after successful submission
+      // Clears any persisted exam session data after a successful or failed completion flow.
       const clearAllExamData = () => {
         const keys = Object.keys(localStorage);
         const examKeys = keys.filter((key) => key.startsWith("exam_"));
@@ -394,6 +401,7 @@ const PracticeExam = ({ closeModal }) => {
     }
   };
 
+  // Removes the selected choice for the current question only.
   const handleClearAnswer = () => {
     setAnswers((prev) => {
       const newAnswers = { ...prev };
@@ -402,6 +410,7 @@ const PracticeExam = ({ closeModal }) => {
     });
   };
 
+  // Calculates the answered percentage that drives the progress bar label and width.
   const calculateProgress = () => {
     const answeredCount = examData.questions.filter(
       (question) => answers[question.questionID] !== undefined,
@@ -411,17 +420,20 @@ const PracticeExam = ({ closeModal }) => {
 
   const progressPercentage = calculateProgress();
 
+  // Checks whether every question already has an answer so the full-width submit button can appear.
   const areAllQuestionsAnswered = () => {
     return examData.questions.every(
       (question) => answers[question.questionID] !== undefined,
     );
   };
 
+  // Jumps directly to a question chosen from the question list modal.
   const handleQuestionClick = (index) => {
     setCurrentQuestionIndex(index);
     setIsQuestionListOpen(false);
   };
 
+  // Adds or removes a question from the bookmarked list for later review.
   const handleToggleBookmark = (questionId) => {
     setBookmarkedQuestions((prev) => {
       if (prev.includes(questionId)) {
@@ -432,6 +444,7 @@ const PracticeExam = ({ closeModal }) => {
     });
   };
 
+  // Formats the countdown into HH:MM:SS for timer displays and payload metadata.
   const formatTime = (seconds) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -439,6 +452,7 @@ const PracticeExam = ({ closeModal }) => {
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
+  // Bypasses the last-question guard only when the timer forces the exam to finish.
   const handleTimerCompletion = () => {
     setShowTimerCompletionModal(false);
     handleSubmitAnswers({ bypassFinalAnswerCheck: true });

@@ -9,6 +9,7 @@ use Modules\Users\Models\User;
 
 class LeaderboardController extends Controller
 {
+    // Builds the leaderboard response, including filter options and weighted ranking data.
     public function index(Request $request)
     {
         $request->validate([

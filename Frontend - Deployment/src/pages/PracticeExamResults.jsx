@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+// Displays the submitted practice exam summary and lets users review correct and incorrect items.
 const PracticeTestResult = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const PracticeTestResult = () => {
   const correctCount = safeResults.filter((q) => q.isCorrect).length;
   const incorrectCount = safeResults.filter((q) => !q.isCorrect).length;
 
-if (error) {
+  if (error) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-white dark:bg-black p-6">
         <h2 className="mb-4 text-3xl font-bold text-red-600">
@@ -40,6 +41,7 @@ if (error) {
     );
   }
 
+  // Formats stored timestamps for the summary card while tolerating missing values.
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);

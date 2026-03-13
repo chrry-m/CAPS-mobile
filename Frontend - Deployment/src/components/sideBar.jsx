@@ -8,7 +8,7 @@ import Questionnare from "./Questionnare";
 import PrintExamModal from "./PrintExamModal";
 import AppVersion from "./appVersion";
 
-// Displays the main sidebar
+// Renders the non-student navigation shell, including the mobile admin bottom bar.
 const Sidebar = ({
   role_id,
   setSelectedSubject,

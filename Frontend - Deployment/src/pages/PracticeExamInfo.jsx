@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 
+// Shows the exam summary screen and passes the selected exam payload into the live exam route.
 const PracticeExamInfo = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,6 +16,7 @@ const PracticeExamInfo = () => {
 
   const totalQuestions = examData.questions ? examData.questions.length : examData.totalQuestions || 0;
 
+  // Starts the exam without refetching by forwarding the prepared exam data through router state.
   const handleStartExam = () => {
     navigate("/practice-exam", {
       state: {
