@@ -32,7 +32,7 @@ class LeaderboardController extends Controller
         $query = DB::table('practice_exam_results')
             ->select(
                 'userID',
-                DB::raw('AVG(percentage) as avg_accuracy'),
+                DB::raw('MAX(percentage) as highest_percentage'),
                 DB::raw('COUNT(*) as total_exams')
             )
             ->whereNotNull('userID')
@@ -64,7 +64,7 @@ class LeaderboardController extends Controller
             $user = $users->get($result->userID);
             
             $normalizedVolume = ($result->total_exams / $maxVolume) * 100;
-            $score = (0.7 * $result->avg_accuracy) + (0.3 * $normalizedVolume);
+            $score = (0.7 * $result->highest_percentage) + (0.3 * $normalizedVolume);
 
             return [
                 'userID' => $user->userID,
@@ -74,12 +74,12 @@ class LeaderboardController extends Controller
                 'name' => trim($user->firstName . ' ' . $user->lastName),
                 'program' => $user->program ? $user->program->programName : null,
                 'role' => $user->role ? $user->role->roleName : null,
-                'avg_accuracy' => round($result->avg_accuracy, 2),
+                'highest_percentage' => round($result->highest_percentage, 2),
                 'total_exams' => $result->total_exams,
-                'points' => round($score * 10), // For frontend compatibility
+                'points' => round($score * 10),
                 'score' => round($score, 2),
             ];
-        })->sortByDesc('score')->values();
+        })->sortByDesc('score')->take(10)->values();
 
         $rank = 1;
         $leaderboard = $leaderboard->map(function ($entry) use (&$rank) {
