@@ -841,7 +841,7 @@ export default function Register() {
       {/* This is the mobile view */}
       <div className="lg:hidden">
         <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-center bg-gradient-to-br from-[#101010] to-[#3c3c3c]">
+          <div className="flex w-full flex-col items-center justify-center bg-gradient-to-br from-[#101010] to-[#3c3c3c] dark:from-black dark:to-[#0a0a0a]">
             <div className="relative flex h-60 w-full flex-col items-center justify-center">
               <div className="font-inter absolute top-5 right-5">
                 <span className="mr-2 text-[12px] text-white">
@@ -905,7 +905,7 @@ export default function Register() {
           {/* Login Card */}
           <div
             style={{ fontFamily: "Poppins, sans-serif" }}
-            className="flex w-full flex-col items-center justify-center rounded-t-4xl bg-white p-6"
+            className="flex w-full flex-col items-center justify-center rounded-t-4xl bg-white dark:bg-gray-900 p-6"
           >
             <h2 className="mb-1 text-[20px] font-bold text-gray-900">
               REGISTER ACCOUNT

@@ -11,70 +11,193 @@ use Modules\Users\Models\User;
 
 class SocialAuthController extends Controller
 {
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
-        return Socialite::driver('google')->redirect();
+        $response = Socialite::driver('google')->stateless()->redirect();
+        $frontendUrlCookie = $this->makeFrontendUrlCookie($request);
+
+        if ($frontendUrlCookie) {
+            $response->withCookie($frontendUrlCookie);
+        }
+
+        return $response;
     }
 
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
             return $this->handleOAuthUser($googleUser, 'google');
         } catch (\Exception $e) {
             Log::error('Google OAuth error: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to authenticate with Google'], 500);
+            return $this->redirectToFrontendError(
+                'provider_failed',
+                'Failed to authenticate with Google.',
+                'google'
+            );
         }
     }
 
-    public function redirectToFacebook()
+    public function redirectToFacebook(Request $request)
     {
-        return Socialite::driver('facebook')->redirect();
+        $response = Socialite::driver('facebook')->stateless()->redirect();
+        $frontendUrlCookie = $this->makeFrontendUrlCookie($request);
+
+        if ($frontendUrlCookie) {
+            $response->withCookie($frontendUrlCookie);
+        }
+
+        return $response;
     }
 
     public function handleFacebookCallback()
     {
         try {
-            $facebookUser = Socialite::driver('facebook')->user();
+            $facebookUser = Socialite::driver('facebook')->stateless()->user();
             return $this->handleOAuthUser($facebookUser, 'facebook');
         } catch (\Exception $e) {
             Log::error('Facebook OAuth error: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to authenticate with Facebook'], 500);
+            return $this->redirectToFrontendError(
+                'provider_failed',
+                'Failed to authenticate with Facebook.',
+                'facebook'
+            );
         }
     }
 
     private function handleOAuthUser($oauthUser, $provider)
     {
         $providerId = $provider . '_id';
-        
         $user = User::where($providerId, $oauthUser->getId())->first();
 
-        if ($user) {
-            Auth::login($user);
-            $token = $user->createToken('auth-token')->plainTextToken;
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => $user,
-                'token' => $token
-            ], 200);
+        if (!$user && $oauthUser->getEmail()) {
+            $existingUser = User::where('email', $oauthUser->getEmail())->first();
+
+            if ($existingUser) {
+                if ($existingUser->$providerId && $existingUser->$providerId !== $oauthUser->getId()) {
+                    return $this->redirectToFrontendError(
+                        'account_mismatch',
+                        ucfirst($provider) . ' is already linked to a different account.',
+                        $provider
+                    );
+                }
+
+                $existingUser->$providerId = $oauthUser->getId();
+                $existingUser->save();
+                $user = $existingUser;
+            }
         }
 
-        $existingUser = User::where('email', $oauthUser->getEmail())->first();
-
-        if ($existingUser) {
-            return response()->json([
-                'message' => 'Email already exists',
-                'email' => $oauthUser->getEmail(),
-                'provider' => $provider
-            ], 409);
+        if (!$user) {
+            return $this->redirectToFrontendError(
+                'no_account',
+                'No existing CAPS account matches this ' . ucfirst($provider) . ' account. Log in with your CAPS account first.',
+                $provider
+            );
         }
 
-        return response()->json([
-            'message' => 'New user - account creation required',
+        return $this->redirectToFrontendSuccess($user, $provider);
+    }
+
+    private function redirectToFrontendSuccess(User $user, string $provider)
+    {
+        Auth::login($user);
+        $token = $user->createToken('auth-token')->plainTextToken;
+
+        return redirect()->away($this->buildFrontendUrl("/auth/{$provider}/callback", [
+            'social_token' => $token,
             'provider' => $provider,
-            'email' => $oauthUser->getEmail(),
-            'name' => $oauthUser->getName()
-        ], 404);
+        ]))->withoutCookie('oauth_frontend_url');
+    }
+
+    private function redirectToFrontendError(string $code, string $message, string $provider)
+    {
+        return redirect()->away($this->buildFrontendUrl("/auth/{$provider}/callback", [
+            'social_error' => $code,
+            'message' => $message,
+            'provider' => $provider,
+        ]))->withoutCookie('oauth_frontend_url');
+    }
+
+    private function buildFrontendUrl(string $path = '/', array $params = []): string
+    {
+        $baseUrl = rtrim($this->resolveFrontendBaseUrl(), '/');
+        $normalizedPath = '/' . ltrim($path, '/');
+        $query = http_build_query($params);
+
+        return $query
+            ? "{$baseUrl}{$normalizedPath}?{$query}"
+            : "{$baseUrl}{$normalizedPath}";
+    }
+
+    private function resolveFrontendBaseUrl(): string
+    {
+        $cookieFrontendUrl = request()->cookie('oauth_frontend_url');
+
+        if ($this->isAllowedFrontendUrl($cookieFrontendUrl)) {
+            return $cookieFrontendUrl;
+        }
+
+        $configuredFrontendUrl = config('app.frontend_url');
+
+        if ($this->isAllowedFrontendUrl($configuredFrontendUrl)) {
+            return $configuredFrontendUrl;
+        }
+
+        return $this->guessFrontendUrl();
+    }
+
+    private function makeFrontendUrlCookie(Request $request)
+    {
+        $frontendUrl = $request->query('frontend_url');
+
+        if (!$this->isAllowedFrontendUrl($frontendUrl)) {
+            return null;
+        }
+
+        return cookie(
+            'oauth_frontend_url',
+            $frontendUrl,
+            10,
+            '/',
+            null,
+            false,
+            false,
+            false,
+            'Lax'
+        );
+    }
+
+    private function isAllowedFrontendUrl(?string $frontendUrl): bool
+    {
+        if (!$frontendUrl || !filter_var($frontendUrl, FILTER_VALIDATE_URL)) {
+            return false;
+        }
+
+        $scheme = parse_url($frontendUrl, PHP_URL_SCHEME);
+        $host = parse_url($frontendUrl, PHP_URL_HOST);
+        $configuredHost = parse_url(config('app.frontend_url'), PHP_URL_HOST);
+        $requestHost = request()->getHost();
+
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        return in_array($host, array_filter([
+            $requestHost,
+            $configuredHost,
+            'localhost',
+            '127.0.0.1',
+        ]), true);
+    }
+
+    private function guessFrontendUrl(): string
+    {
+        $request = request();
+        $scheme = $request->getScheme() ?: parse_url(config('app.url'), PHP_URL_SCHEME) ?: 'http';
+        $host = $request->getHost() ?: parse_url(config('app.url'), PHP_URL_HOST) ?: 'localhost';
+
+        return "{$scheme}://{$host}:8085";
     }
 
     public function verifyLink(Request $request)

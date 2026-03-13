@@ -60,7 +60,7 @@ const AdminDashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${getApiUrl()}/questions/count`,
+          `${getApiUrl()}/api/questions/count`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
         // Fetch all users (first page, large limit)
         const response = await fetch(
-          `${getApiUrl()}/users?limit=10000`,
+          `${getApiUrl()}/api/users?limit=10000`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -141,7 +141,7 @@ const AdminDashboard = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await fetch(
-          `${getApiUrl()}/subjects`,
+          `${getApiUrl()}/api/subjects`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -178,7 +178,7 @@ const AdminDashboard = () => {
         const token = localStorage.getItem("token");
         // Fetch all questions
         const response = await fetch(
-          `${getApiUrl()}/questions/count`,
+          `${getApiUrl()}/api/questions/count`,
           {
             headers: {
               "Content-Type": "application/json",

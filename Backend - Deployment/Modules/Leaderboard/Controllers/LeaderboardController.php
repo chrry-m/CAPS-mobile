@@ -16,6 +16,18 @@ class LeaderboardController extends Controller
             'subject' => 'nullable|integer|exists:subjects,subjectID',
         ]);
 
+        // Get programs for filter dropdown
+        $programs = DB::table('programs')
+            ->select('programID', 'programName')
+            ->orderBy('programName')
+            ->get();
+
+        // Get subjects for filter dropdown
+        $subjects = DB::table('subjects')
+            ->select('subjectID', 'subjectName', 'subjectCode')
+            ->orderBy('subjectName')
+            ->get();
+
         $query = DB::table('practice_exam_results')
             ->select(
                 'userID',
@@ -23,7 +35,8 @@ class LeaderboardController extends Controller
                 DB::raw('COUNT(*) as total_exams')
             )
             ->whereNotNull('userID')
-            ->groupBy('userID');
+            ->groupBy('userID')
+            ->where('userID', '>', 0);
 
         if ($request->has('subject') && $request->subject) {
             $query->where('subjectID', $request->subject);
@@ -57,10 +70,12 @@ class LeaderboardController extends Controller
                 'userCode' => $user->userCode,
                 'firstName' => $user->firstName,
                 'lastName' => $user->lastName,
+                'name' => trim($user->firstName . ' ' . $user->lastName),
                 'program' => $user->program ? $user->program->programName : null,
                 'role' => $user->role ? $user->role->roleName : null,
                 'avg_accuracy' => round($result->avg_accuracy, 2),
                 'total_exams' => $result->total_exams,
+                'points' => round($score * 10), // For frontend compatibility
                 'score' => round($score, 2),
             ];
         })->sortByDesc('score')->values();
@@ -73,6 +88,8 @@ class LeaderboardController extends Controller
 
         return response()->json([
             'leaderboard' => $leaderboard,
+            'programs' => $programs,
+            'subjects' => $subjects,
             'total' => $leaderboard->count()
         ], 200);
     }

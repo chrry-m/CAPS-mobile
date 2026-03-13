@@ -51,9 +51,14 @@ const Layout = () => {
 
   const isStudent = Number(role_id) === 1;
   const isTutorialPage = location.pathname.includes("/help");
+  const mainClass = isTutorialPage
+    ? "px-4 pt-14"
+    : isStudent
+      ? "px-4 pt-14 pb-[7.75rem]"
+      : "px-4 pt-14 pb-24";
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-black">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
       <div className="flex">
         {!isStudent && !isTutorialPage && (
           <Sidebar
@@ -65,18 +70,17 @@ const Layout = () => {
           />
         )}
         <div
-          className={`flex flex-1 flex-col transition-all duration-200 ${
-            isStudent || isTutorialPage
+          className={`flex flex-1 flex-col transition-all duration-200 ${isStudent || isTutorialPage
               ? "ml-0"
               : isMobile
                 ? "ml-0"
                 : isExpanded
                   ? "ml-[307px]"
                   : "ml-[55.5px]"
-          }`}
+            }`}
         >
           <Header title={roleTitle} />
-          <main className={isTutorialPage ? "pt-14" : "pt-14 p-2 pb-30"}>
+          <main className={mainClass}>
             <Outlet context={{ selectedSubject, setSelectedSubject }} />
           </main>
         </div>
