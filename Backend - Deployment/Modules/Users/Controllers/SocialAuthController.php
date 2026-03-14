@@ -6,26 +6,15 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Config;
 use Laravel\Socialite\Facades\Socialite;
 use Modules\Users\Models\User;
 
 class SocialAuthController extends Controller
 {
-    // CONFIG: Change this to your production domain when deploying
-    // Examples: 'http://localhost:8005' for local, 'http://yourdomain.com' for production
-    private const OAUTH_BASE_URL = 'http://localhost:8005';
-
     // Starts the Google OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToGoogle(Request $request)
     {
-        $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/google/callback';
-        
-        $response = Socialite::driver('google')
-            ->stateless()
-            ->redirectUrl($redirectUrl)
-            ->redirect();
-        
+        $response = Socialite::driver('google')->stateless()->redirect();
         $frontendUrlCookie = $this->makeFrontendUrlCookie($request);
 
         if ($frontendUrlCookie) {
@@ -36,14 +25,10 @@ class SocialAuthController extends Controller
     }
 
     // Handles the Google provider callback and always sends the browser back to the frontend.
-    public function handleGoogleCallback(Request $request)
+    public function handleGoogleCallback()
     {
         try {
-            $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/google/callback';
-            $googleUser = Socialite::driver('google')
-                ->stateless()
-                ->redirectUrl($redirectUrl)
-                ->user();
+            $googleUser = Socialite::driver('google')->stateless()->user();
             return $this->handleOAuthUser($googleUser, 'google');
         } catch (\Exception $e) {
             Log::error('Google OAuth error: ' . $e->getMessage());
@@ -58,13 +43,7 @@ class SocialAuthController extends Controller
     // Starts the Facebook OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToFacebook(Request $request)
     {
-        $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/facebook/callback';
-        
-        $response = Socialite::driver('facebook')
-            ->stateless()
-            ->redirectUrl($redirectUrl)
-            ->redirect();
-        
+        $response = Socialite::driver('facebook')->stateless()->redirect();
         $frontendUrlCookie = $this->makeFrontendUrlCookie($request);
 
         if ($frontendUrlCookie) {
@@ -75,14 +54,10 @@ class SocialAuthController extends Controller
     }
 
     // Handles the Facebook provider callback and always sends the browser back to the frontend.
-    public function handleFacebookCallback(Request $request)
+    public function handleFacebookCallback()
     {
         try {
-            $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/facebook/callback';
-            $facebookUser = Socialite::driver('facebook')
-                ->stateless()
-                ->redirectUrl($redirectUrl)
-                ->user();
+            $facebookUser = Socialite::driver('facebook')->stateless()->user();
             return $this->handleOAuthUser($facebookUser, 'facebook');
         } catch (\Exception $e) {
             Log::error('Facebook OAuth error: ' . $e->getMessage());
