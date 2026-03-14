@@ -161,7 +161,7 @@ export default function LoginPage() {
     try {
       const loginUrl = `${apiUrl}/api/login`;
       console.log('Attempting login to:', loginUrl);
-      
+
       const response = await fetch(loginUrl, {
         method: "POST",
         headers: {
@@ -176,10 +176,10 @@ export default function LoginPage() {
 
       console.log('Response status:', response.status);
       console.log('Response headers:', [...response.headers.entries()]);
-      
+
       const responseText = await response.text();
       console.log('Response text preview:', responseText.substring(0, 200));
-      
+
       let data;
       try {
         data = JSON.parse(responseText);
@@ -276,7 +276,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-{/* Right Section */}
+          {/* Right Section */}
           <div className="mt-30 flex w-full items-center justify-center p-6 sm:mt-30 md:mt-30 lg:mt-0 lg:w-1/2">
             <div className="w-full max-w-xs space-y-6 sm:max-w-md">
               <div
@@ -426,7 +426,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-{/* Mobile View */}
+      {/* Mobile View */}
       <div
         className="flex min-h-screen flex-col bg-white dark:bg-black lg:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
@@ -494,7 +494,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-<div
+        <div
           style={{
             borderTopLeftRadius: "30px 15px",
             borderTopRightRadius: "30px 15px",
@@ -502,7 +502,7 @@ export default function LoginPage() {
           className="mx-auto -mt-10 flex h-[14px] w-[85%] flex-col items-center justify-center bg-white/10 dark:bg-black/50 shadow-lg backdrop-blur-md"
         ></div>
 
-{/* Login Card */}
+        {/* Login Card */}
         <div
           style={{ fontFamily: "Poppins, sans-serif" }}
           className="flex w-full flex-1 flex-col items-center justify-center rounded-t-4xl bg-white dark:bg-black p-6"
@@ -586,52 +586,52 @@ export default function LoginPage() {
             </button>
           </form>
           <button
-              type="button"
-              className="mt-2 mb-3 text-sm text-[#FE6902] hover:underline"
-              onClick={() => navigate("/forgot-password")}
-            >
-              Forgot your password?
-            </button>
+            type="button"
+            className="mt-2 mb-3 text-sm text-[#FE6902] hover:underline"
+            onClick={() => navigate("/forgot-password")}
+          >
+            Forgot your password?
+          </button>
 
-            {/* Social Login */}
-            <div className="mb-4 flex w-full items-center justify-center gap-3">
-              <span className="text-xs text-gray-500 dark:text-gray-400">or continue with</span>
-            </div>
-            <div className="mb-4 flex w-full gap-3">
-              <button
-                type="button"
-                onClick={() => handleSocialLoginRedirect("google")}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                <FcGoogle className="text-lg" />
-                Google
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSocialLoginRedirect("facebook")}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                <FaFacebook className="text-lg text-blue-600" />
-                Facebook
-              </button>
-            </div>
+          {/* Social Login */}
+          <div className="mb-4 flex w-full items-center justify-center gap-3">
+            <span className="text-xs text-gray-500 dark:text-gray-400">or continue with</span>
           </div>
-          <div className="mt-4 mb-2">
-            <span className="text-xs text-gray-400 dark:text-gray-500">
-              <AppVersion />
-            </span>
-          </div>
-
-          <span className="mb-4 text-xs text-gray-400 dark:text-gray-500">
-            Developed by{" "}
+          <div className="mb-4 flex w-full gap-3">
             <button
-              onClick={() => navigate("/team-caps")}
-              className="cursor-pointer text-orange-500 hover:underline"
+              type="button"
+              onClick={() => handleSocialLoginRedirect("google")}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-800"
             >
-              Team Caps
+              <FcGoogle className="text-lg" />
+              Google
             </button>
+            <button
+              type="button"
+              onClick={() => handleSocialLoginRedirect("facebook")}
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-black px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-800"
+            >
+              <FaFacebook className="text-lg text-blue-600" />
+              Facebook
+            </button>
+          </div>
+        </div>
+        <div className="mt-4 mb-2">
+          <span className="text-xs text-gray-400 dark:text-gray-500">
+            <AppVersion />
           </span>
         </div>
+
+        <span className="mb-4 text-xs text-gray-400 dark:text-gray-500">
+          Developed by{" "}
+          <button
+            onClick={() => navigate("/team-caps")}
+            className="cursor-pointer text-orange-500 hover:underline"
+          >
+            Team Caps
+          </button>
+        </span>
+      </div>
 
       <Toast message={toast.message} type={toast.type} show={toast.show} />
     </>

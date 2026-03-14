@@ -45,6 +45,51 @@ body,
   color: var(--color-text);
 }
 
+.dark .register-theme input:not(.border-red-500) {
+  background-color: #000;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.dark .register-theme input:not(.border-red-500):hover {
+  border-color: #6b7280;
+}
+
+.dark .register-theme label.text-gray-500 {
+  background-color: #000;
+  color: #9ca3af;
+}
+
+.dark .register-theme button[tabindex="-1"] {
+  color: #6b7280;
+}
+
+.dark .register-theme button[tabindex="-1"]:hover {
+  color: #d1d5db;
+}
+
+.dark .register-theme .register-support-text {
+  color: #9ca3af;
+}
+
+.dark .register-theme .register-version {
+  color: #6b7280;
+}
+
+.dark .register-theme .register-divider {
+  background-color: #1f2937;
+}
+
+.dark .register-theme .register-back-button {
+  background-color: #000;
+  border-color: #374151;
+  color: #f9fafb;
+}
+
+.dark .register-theme .register-back-button:hover {
+  background-color: #1f2937;
+}
+
 .text-stroke {
   text-shadow:
     rgba(223, 239, 255) 0px 3px 0px,
