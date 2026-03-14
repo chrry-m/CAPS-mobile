@@ -12,6 +12,7 @@ use Modules\Users\Models\User;
 
 class SocialAuthController extends Controller
 {
+
     // Starts the Google OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToGoogle(Request $request)
     {
@@ -35,7 +36,7 @@ class SocialAuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-        $redirectUrl = 'http://localhost:8005/api/auth/google/callback';
+            $redirectUrl = config('services.google.redirect');
             $googleUser = Socialite::driver('google')
                 ->stateless()
                 ->redirectUrl($redirectUrl)
@@ -54,7 +55,7 @@ class SocialAuthController extends Controller
     // Starts the Facebook OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToFacebook(Request $request)
     {
-            $redirectUrl = 'http://localhost:8005/api/auth/facebook/callback';
+        $redirectUrl = config('services.facebook.redirect');
         
         $response = Socialite::driver('facebook')
             ->stateless()
@@ -74,7 +75,7 @@ class SocialAuthController extends Controller
     public function handleFacebookCallback(Request $request)
     {
         try {
-        $redirectUrl = 'http://localhost:8005/api/auth/facebook/callback';
+            $redirectUrl = config('services.facebook.redirect');
             $facebookUser = Socialite::driver('facebook')
                 ->stateless()
                 ->redirectUrl($redirectUrl)
