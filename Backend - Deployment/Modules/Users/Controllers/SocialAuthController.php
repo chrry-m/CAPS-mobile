@@ -12,11 +12,14 @@ use Modules\Users\Models\User;
 
 class SocialAuthController extends Controller
 {
+    // CONFIG: Change this to your production domain when deploying
+    // Examples: 'http://localhost:8005' for local, 'http://yourdomain.com' for production
+    private const OAUTH_BASE_URL = 'http://localhost:8005';
 
     // Starts the Google OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToGoogle(Request $request)
     {
-            $redirectUrl = 'http://localhost:8005/api/auth/google/callback';
+        $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/google/callback';
         
         $response = Socialite::driver('google')
             ->stateless()
@@ -36,7 +39,7 @@ class SocialAuthController extends Controller
     public function handleGoogleCallback(Request $request)
     {
         try {
-            $redirectUrl = config('services.google.redirect');
+            $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/google/callback';
             $googleUser = Socialite::driver('google')
                 ->stateless()
                 ->redirectUrl($redirectUrl)
@@ -55,7 +58,7 @@ class SocialAuthController extends Controller
     // Starts the Facebook OAuth flow and remembers which frontend should receive the callback result.
     public function redirectToFacebook(Request $request)
     {
-        $redirectUrl = config('services.facebook.redirect');
+        $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/facebook/callback';
         
         $response = Socialite::driver('facebook')
             ->stateless()
@@ -75,7 +78,7 @@ class SocialAuthController extends Controller
     public function handleFacebookCallback(Request $request)
     {
         try {
-            $redirectUrl = config('services.facebook.redirect');
+            $redirectUrl = self::OAUTH_BASE_URL . '/api/auth/facebook/callback';
             $facebookUser = Socialite::driver('facebook')
                 ->stateless()
                 ->redirectUrl($redirectUrl)
