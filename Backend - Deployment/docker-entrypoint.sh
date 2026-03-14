@@ -34,11 +34,11 @@ if ! grep -q "^APP_KEY=base64:" .env 2>/dev/null; then
   exit 1
 fi
 
-# JWT secret can still be initialized for fresh environments because it does not decrypt database rows.
-if ! grep -q "^JWT_SECRET=." .env 2>/dev/null; then
-  echo "Generating JWT secret..."
-  php artisan jwt:secret --force
-fi
+# Skip JWT secret - using Sanctum instead
+# if ! grep -q "^JWT_SECRET=." .env 2>/dev/null; then
+#   echo "Generating JWT secret..."
+#   php artisan jwt:secret --force
+# fi
 
 php artisan optimize:clear
 php artisan config:cache
