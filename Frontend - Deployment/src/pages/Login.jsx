@@ -210,7 +210,7 @@ export default function LoginPage() {
       const fullUrl = `${apiUrl}/api/login`;
       console.error('Login catch block error:', error);
       if (!apiUrl) {
-        showToast("Server not configured. Please click 'Server Configuration'.", "error");
+        showToast("API Server URL is missing. Please check configuration.", "error");
       } else if (error.name === 'TypeError' && error.message?.includes('fetch')) {
         showToast(`Network error - cannot reach ${apiUrl}. Check URL and internet connection.`, "error");
       } else {

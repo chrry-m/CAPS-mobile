@@ -4,18 +4,26 @@
 
 const DEFAULT_LOCAL_SERVER = 'http://100.91.44.24:8005';
 const DEFAULT_TEST_SERVER = 'http://18.142.190.113:8000';
-const USE_TEST_SERVER = false;
+const USE_TEST_SERVER = true;
 
 const API_BASE_URL_KEY = 'apiBaseUrl';
 
 // Reads the saved API base URL and falls back to the selected default server.
 const getStoredApiUrl = () => {
-  const defaultServer = USE_TEST_SERVER
-    ? DEFAULT_TEST_SERVER
-    : DEFAULT_LOCAL_SERVER;
+  // 1. Prioritize Test Server Flag
+  if (USE_TEST_SERVER) {
+    // Check if we need to clean up stale local data ONCE to avoid redundant writes
+    if (typeof window !== 'undefined' && localStorage.getItem(API_BASE_URL_KEY)) {
+      localStorage.removeItem(API_BASE_URL_KEY);
+    }
+    return DEFAULT_TEST_SERVER;
+  }
 
-  if (typeof window === 'undefined') return defaultServer;
-  return localStorage.getItem(API_BASE_URL_KEY) || defaultServer;
+  // 2. Local/Dev Mode Fallback
+  if (typeof window === 'undefined') return DEFAULT_LOCAL_SERVER;
+  
+  // Return stored IP (for dev override) or the default local IP
+  return localStorage.getItem(API_BASE_URL_KEY) || DEFAULT_LOCAL_SERVER;
 };
 
 // Returns the active backend base URL used by frontend requests.
