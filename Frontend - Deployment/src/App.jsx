@@ -8,10 +8,13 @@ import TutorialLayout from "./components/TutorialLayout";
 import Credits from "./pages/Credits";
 
 import StudentDashboard from "./pages/StudentDashboard";
+import StudentInsights from "./pages/StudentInsights";
 import FacultyDashboard from "./pages/FacultyDashboard";
 import ProgramChairDashboard from "./pages/ProgramChairDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AssoDeanDashboard from "./pages/AssoDeanDashboard";
+import AdminSupport from "./pages/AdminSupport";
+import AdminAnalytics from "./pages/AdminAnalytics";
 
 import Leaderboard from "./pages/Leaderboard";
 
@@ -32,6 +35,7 @@ import PracticeExamInfo from "./pages/PracticeExamInfo";
 
 import TestLogin from "./tests/testLogin";
 
+// Render the app component.
 function App() {
   return (
     <Router>
@@ -90,6 +94,13 @@ function App() {
         >
           <Route index element={<StudentDashboard />} />
           <Route path="dashboard" element={<StudentDashboard />} />
+        </Route>
+
+        <Route
+          path="/student-insights"
+          element={<ProtectedRoute element={<Layout />} />}
+        >
+          <Route index element={<StudentInsights />} />
         </Route>
 
         {/* Leaderboard Route */}
@@ -165,6 +176,20 @@ function App() {
         >
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
+        </Route>
+
+        <Route
+          path="/admin/support"
+          element={<ProtectedRoute element={<Layout />} />}
+        >
+          <Route index element={<AdminSupport />} />
+        </Route>
+
+        <Route
+          path="/admin/analytics"
+          element={<ProtectedRoute element={<Layout />} />}
+        >
+          <Route index element={<AdminAnalytics />} />
         </Route>
 
         {/* Users Route */}

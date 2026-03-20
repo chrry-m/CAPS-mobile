@@ -152,6 +152,7 @@ const UserList = () => {
   };
 
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
@@ -295,6 +296,7 @@ const UserList = () => {
     (user) => user.status === "pending",
   ).length;
 
+  // Handles search change.
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value); // Update the search term
   };
@@ -873,6 +875,7 @@ const UserList = () => {
     );
   }
 
+  // Handles render pagination.
   const renderPagination = () => {
     const pages = [];
     const maxVisiblePages = 5;

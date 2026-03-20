@@ -87,6 +87,7 @@ const FacultyContent = () => {
   // Fetch QE enabled status and practice exam settings when subject changes
   useEffect(() => {
     if (selectedSubject && selectedSubject.subjectID) {
+      // Fetches subject settings.
       const fetchSubjectSettings = async () => {
         const token = localStorage.getItem("token");
         try {
@@ -165,11 +166,13 @@ const FacultyContent = () => {
     setEditText(question.questionText);
   };
 
+  // Cancels edit.
   const cancelEdit = () => {
     setEditQuestionID(null);
     setEditText("");
   };
 
+  // Saves edit.
   const saveEdit = async (questionID) => {
     try {
       const token = localStorage.getItem("token");
@@ -348,6 +351,7 @@ const FacultyContent = () => {
     setEditingQuestion(question);
   };
 
+  // Handles edit complete.
   const handleEditComplete = () => {
     setEditingQuestion(null);
     fetchQuestions();
@@ -377,6 +381,7 @@ const FacultyContent = () => {
 
   // Effect to handle clicks outside dropdown
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         dropdownRef.current &&
@@ -397,6 +402,7 @@ const FacultyContent = () => {
     };
   }, []);
 
+  // Approves question.
   const approveQuestion = async (questionID) => {
     try {
       const token = localStorage.getItem("token");
@@ -461,6 +467,7 @@ const FacultyContent = () => {
   // Close floating counter when clicking outside
   useEffect(() => {
     if (!showDifficultyCounter) return;
+    // Handles click.
     function handleClick(e) {
       if (
         difficultyIconRef.current &&

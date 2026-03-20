@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { getApiUrl } from "../utils/config";
 
+// Provides auto logout on close.
 const useAutoLogoutOnClose = () => {
   const apiUrl = getApiUrl();
 
   useEffect(() => {
+    // Handles unload.
     const handleUnload = () => {
       const token = localStorage.getItem("token");
 

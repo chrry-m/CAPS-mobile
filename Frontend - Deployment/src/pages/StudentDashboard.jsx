@@ -4,6 +4,7 @@ import { getApiUrl } from "../utils/config";
 import DashboardCarousel from "../components/DashboardCarousel";
 import StudentSubjectCard from "../components/StudentSubjectCard";
 
+// Renders the student dashboard.
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const [subjectID, setSubjectID] = useState("");
@@ -22,6 +23,7 @@ const [showForm, setShowForm] = useState(false);
   const [ongoingExam, setOngoingExam] = useState(null);
   const [loadingExamPreview, setLoadingExamPreview] = useState(false);
 
+  // Resets form.
   const resetForm = () => {
     setSubjectInput("");
     setSubjectID("");
@@ -32,6 +34,7 @@ const [showForm, setShowForm] = useState(false);
 
   // Close suggestions when clicking outside
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         suggestionsRef.current &&
@@ -69,10 +72,12 @@ const [showForm, setShowForm] = useState(false);
     }, 500);
   }, [subjectInput, subjects]);
 
+  // Handles input focus.
   const handleInputFocus = () => {
     setShowSuggestions(true);
   };
 
+  // Handles input blur.
   const handleInputBlur = (e) => {
     // Add a small delay to allow click events on suggestions to fire first
     setTimeout(() => {
@@ -85,6 +90,7 @@ const [showForm, setShowForm] = useState(false);
 
 // Fetch available subjects when component mounts
   useEffect(() => {
+    // Fetches subjects.
     const fetchSubjects = async () => {
       try {
         const response = await fetch(`${apiUrl}/api/student/practice-subjects`, {
@@ -116,6 +122,7 @@ const [showForm, setShowForm] = useState(false);
 
   // Check for ongoing exam when component mounts
   useEffect(() => {
+    // Checks ongoing exam.
     const checkOngoingExam = () => {
       // Get all localStorage keys
       const keys = Object.keys(localStorage);
@@ -215,6 +222,7 @@ const [showForm, setShowForm] = useState(false);
     checkOngoingExam();
   }, [apiUrl]);
 
+  // Handles continue exam.
   const handleContinueExam = () => {
     if (ongoingExam) {
       navigate("/practice-exam", {
@@ -229,10 +237,12 @@ const [showForm, setShowForm] = useState(false);
     }
   };
 
+  // Handles start exam.
   const handleStartExam = () => {
     setExamStarted(true);
   };
 
+  // Handles generate exam.
   const handleGenerateExam = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -359,12 +369,14 @@ const [showForm, setShowForm] = useState(false);
     }
   };
 
+// Handles subject select.
 const handleSubjectSelect = (subject) => {
     setSubjectInput(subject.subjectName);
     setSubjectID(subject.subjectID);
     setShowSuggestions(false); // Close the suggestions dropdown
   };
 
+  // Handles subject click.
   const handleSubjectClick = async (subject) => {
     setLoadingExamPreview(true);
     try {

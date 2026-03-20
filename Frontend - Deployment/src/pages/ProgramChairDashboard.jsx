@@ -1,5 +1,6 @@
 import ComingSoon from "../assets/icons/comingsoon.png";
 
+// Renders the program chair dashboard.
 const ProgramChairDashboard = () => {
   return (
     <div className="mt-8 text-center text-gray-500">
@@ -19,4 +20,3 @@ const ProgramChairDashboard = () => {
 };
 
 export default ProgramChairDashboard;
-//

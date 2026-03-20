@@ -44,6 +44,7 @@ const CombinedExamQuestionForm = ({ subjectID, onComplete, onCancel }) => {
 
   // Question text formatting handlers
   useEffect(() => {
+    // Handles selection change.
     const handleSelectionChange = () => {
       setIsBold(document.queryCommandState("bold"));
       setIsItalic(document.queryCommandState("italic"));
@@ -55,12 +56,14 @@ const CombinedExamQuestionForm = ({ subjectID, onComplete, onCancel }) => {
       document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
 
+  // Handles format.
   const handleFormat = (command, setState) => {
     document.execCommand(command, false, null);
     setState(document.queryCommandState(command));
     editorRef.current.focus();
   };
 
+  // Checks formatting.
   const checkFormatting = () => {
     setTimeout(() => {
       setIsBold(document.queryCommandState("bold"));
@@ -103,6 +106,7 @@ const CombinedExamQuestionForm = ({ subjectID, onComplete, onCancel }) => {
     setFormData((prev) => ({ ...prev, choices: updatedChoices }));
   };
 
+  // Handles choice image upload.
   const handleChoiceImageUpload = (index, event) => {
     const file = event.target.files[0];
     if (file) {
@@ -116,6 +120,7 @@ const CombinedExamQuestionForm = ({ subjectID, onComplete, onCancel }) => {
     }
   };
 
+  // Removes choice image.
   const removeChoiceImage = (index) => {
     const updatedChoices = [...formData.choices];
     updatedChoices[index] = { choiceText: "", isCorrect: false, image: null };

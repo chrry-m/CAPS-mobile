@@ -90,6 +90,7 @@ const SubjectCard = ({
   }, [showDropdown, editingSubject, showDeleteModal, isFormOpen]);
 
   useEffect(() => {
+    // Handles update mobile indicator position.
     const updateMobileIndicatorPosition = () => {
       const el = mobileTabRefs.current[activeIndex];
       if (el) {
@@ -133,6 +134,7 @@ const SubjectCard = ({
   const tabletTabRefs = useRef([]);
 
   useEffect(() => {
+    // Handles update tablet indicator position.
     const updateTabletIndicatorPosition = () => {
       const el = tabletTabRefs.current[activeIndex];
       if (el) {
@@ -187,6 +189,7 @@ const SubjectCard = ({
   const actionButtonRef = useRef(null);
 
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         actionDropdownRef.current &&
@@ -205,6 +208,7 @@ const SubjectCard = ({
   }, []);
 
   useEffect(() => {
+    // Handles update position.
     function updatePosition() {
       if (actionButtonRef.current && showActionDropdownTablet) {
         const buttonRect = actionButtonRef.current.getBoundingClientRect();
@@ -222,6 +226,7 @@ const SubjectCard = ({
 
   // Fetch programs and year levels
   useEffect(() => {
+    // Fetches programs.
     const fetchPrograms = async () => {
       const token = localStorage.getItem("token");
       try {
@@ -266,6 +271,7 @@ const SubjectCard = ({
 
   // Effect to update tab indicator position
   useEffect(() => {
+    // Handles update indicator position.
     const updateIndicatorPosition = () => {
       if (tabRefs.current[activeIndex]) {
         const activeTab = tabRefs.current[activeIndex];
@@ -316,6 +322,7 @@ const SubjectCard = ({
 
   // Effect to handle clicks outside dropdown
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         dropdownRef.current &&
@@ -454,6 +461,7 @@ const SubjectCard = ({
     }
   }, [showSearchInput]);
 
+  // Renders the skeleton loader.
   const SkeletonLoader = () => (
     <>
       {/* Desktop skeleton */}

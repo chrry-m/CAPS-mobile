@@ -15,6 +15,7 @@ import EmptyImage from "../assets/icons/empty.png";
 import Subject from "../assets/icons/papers.png";
 import { getApiUrl } from "../utils/config";
 
+// Renders the program chair content.
 const ProgramChairContent = () => {
   const apiUrl = getApiUrl();
 
@@ -41,6 +42,7 @@ const ProgramChairContent = () => {
   const [editText, setEditText] = useState("");
 
   const [areChoicesValid, setAreChoicesValid] = useState(false);
+  // Handles choices validity.
   const handleChoicesValidity = (validity) => {
     setAreChoicesValid(validity);
   };
@@ -77,6 +79,7 @@ const ProgramChairContent = () => {
   // Fetch QE enabled status and practice exam settings when subject changes
   useEffect(() => {
     if (selectedSubject && selectedSubject.subjectID) {
+      // Fetches subject settings.
       const fetchSubjectSettings = async () => {
         const token = localStorage.getItem("token");
         try {
@@ -159,6 +162,7 @@ const ProgramChairContent = () => {
     setEditText(question.questionText);
   };
 
+  // Cancels edit.
   const cancelEdit = () => {
     setEditQuestionID(null);
     setEditText("");
@@ -375,6 +379,7 @@ const ProgramChairContent = () => {
 
   // Effect to handle clicks outside the dropdown menu
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         dropdownRef.current &&
@@ -441,6 +446,7 @@ const ProgramChairContent = () => {
   // Close floating counter when clicking outside
   useEffect(() => {
     if (!showDifficultyCounter) return;
+    // Handles click.
     function handleClick(e) {
       if (
         difficultyIconRef.current &&

@@ -7,6 +7,7 @@ const Sort = ({ sortOption, setSortOption }) => {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
@@ -25,6 +26,7 @@ const Sort = ({ sortOption, setSortOption }) => {
     { value: "date", label: "Date Created" },
   ];
 
+  // Handles sort change.
   const handleSortChange = (e) => {
     const newValue = e.target.value;
 

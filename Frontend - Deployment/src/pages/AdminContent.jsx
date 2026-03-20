@@ -47,6 +47,7 @@ const AdminContent = () => {
 
   // State for form validation
   const [areChoicesValid, setAreChoicesValid] = useState(false);
+  // Handles choices validity.
   const handleChoicesValidity = (validity) => {
     setAreChoicesValid(validity);
   };
@@ -90,6 +91,7 @@ const AdminContent = () => {
   // Fetch QE enabled status and practice exam settings when subject changes
   useEffect(() => {
     if (selectedSubject && selectedSubject.subjectID) {
+      // Fetches subject settings.
       const fetchSubjectSettings = async () => {
         const token = localStorage.getItem("token");
         try {
@@ -351,6 +353,7 @@ const AdminContent = () => {
   }, [listViewOnly]);
 
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
@@ -406,6 +409,7 @@ const AdminContent = () => {
   // Close floating counter when clicking outside
   useEffect(() => {
     if (!showDifficultyCounter) return;
+    // Handles click.
     function handleClick(e) {
       if (
         difficultyIconRef.current &&

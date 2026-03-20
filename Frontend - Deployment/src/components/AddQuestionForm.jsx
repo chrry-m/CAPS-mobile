@@ -51,6 +51,7 @@ const CombinedQuestionForm = ({
 
   // Fetch the state on mount or when subjectID changes
   useEffect(() => {
+    // Fetches exam questions enabled.
     const fetchExamQuestionsEnabled = async () => {
       if (!subjectID) return;
       setIsExamQuestionsLoading(true);
@@ -94,6 +95,7 @@ const CombinedQuestionForm = ({
 
   // Question text formatting handlers
   useEffect(() => {
+    // Handles selection change.
     const handleSelectionChange = () => {
       setIsBold(document.queryCommandState("bold"));
       setIsItalic(document.queryCommandState("italic"));
@@ -105,12 +107,14 @@ const CombinedQuestionForm = ({
       document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
 
+  // Handles format.
   const handleFormat = (command, setState) => {
     document.execCommand(command, false, null);
     setState(document.queryCommandState(command));
     editorRef.current.focus();
   };
 
+  // Checks formatting.
   const checkFormatting = () => {
     setTimeout(() => {
       setIsBold(document.queryCommandState("bold"));
@@ -153,6 +157,7 @@ const CombinedQuestionForm = ({
     setFormData((prev) => ({ ...prev, choices: updatedChoices }));
   };
 
+  // Handles choice image upload.
   const handleChoiceImageUpload = (index, event) => {
     const file = event.target.files[0];
     if (file) {
@@ -166,6 +171,7 @@ const CombinedQuestionForm = ({
     }
   };
 
+  // Removes choice image.
   const removeChoiceImage = (index) => {
     const updatedChoices = [...formData.choices];
     updatedChoices[index] = { choiceText: "", isCorrect: false, image: null };

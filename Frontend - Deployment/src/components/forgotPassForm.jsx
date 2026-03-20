@@ -9,6 +9,7 @@ import useToast from "../hooks/useToast";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useTheme } from "../contexts/ThemeContext.jsx";
 
+// Renders the forgot password form.
 const ForgotPasswordForm = () => {
   const apiUrl = getApiUrl();
   const [loading, setLoading] = useState(false);
@@ -18,6 +19,7 @@ const ForgotPasswordForm = () => {
 
   const [email, setEmail] = useState("");
 
+  // Handles submit.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);

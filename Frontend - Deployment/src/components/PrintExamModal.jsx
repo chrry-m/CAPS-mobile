@@ -10,6 +10,7 @@ import {
   useEffect as useLocalEffect,
 } from "react";
 
+// Renders the exam generator.
 export default function ExamGenerator({ auth, isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,6 +47,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     };
   }, [isOpen]);
 
+  // Handles close.
   const handleClose = () => {
     if (loading) {
       setShowConfirmClose(true);
@@ -67,6 +69,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     onClose();
   };
 
+  // Handles confirm close.
   const handleConfirmClose = () => {
     setLoading(false);
     setShowConfirmClose(false);
@@ -91,6 +94,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
   const diffButtonRef = useLocalRef(null);
 
   useLocalEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         diffDropdownRef.current &&
@@ -105,6 +109,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     };
   }, []);
 
+  // Fetches subjects.
   const fetchSubjects = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/subjects`, {
@@ -121,6 +126,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     }
   };
 
+  // Handles subject add.
   const handleSubjectAdd = (e) => {
     const subjectID = parseInt(e.target.value);
     const subject = subjects.find((s) => s.subjectID === subjectID);
@@ -140,6 +146,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     }
   };
 
+  // Handles subject percentage change.
   const handleSubjectPercentageChange = (subjectID, value) => {
     setSelectedSubjects((prev) =>
       prev.map((s) =>
@@ -150,6 +157,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     );
   };
 
+  // Handles remove subject.
   const handleRemoveSubject = (subjectID) => {
     setSelectedSubjects((prev) => {
       const remaining = prev.filter((s) => s.subjectID !== subjectID);
@@ -161,6 +169,7 @@ export default function ExamGenerator({ auth, isOpen, onClose }) {
     });
   };
 
+  // Handles submit.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");

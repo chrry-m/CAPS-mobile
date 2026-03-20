@@ -8,6 +8,7 @@ const SUBJECT_BADGES = [
   "bg-violet-400 text-slate-950",
 ];
 
+// Renders the student subject card.
 const StudentSubjectCard = ({ baseName, subjectImage, onClick, disabled }) => {
   const initials = baseName
     ? baseName

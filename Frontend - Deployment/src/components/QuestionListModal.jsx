@@ -17,6 +17,7 @@ const QuestionListModal = ({
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState(null);
 
+  // Toggles question.
   const toggleQuestion = (questionId) => {
     setExpandedQuestions((prev) => ({
       ...prev,
@@ -24,6 +25,7 @@ const QuestionListModal = ({
     }));
   };
 
+  // Toggles show all.
   const toggleShowAll = () => {
     const newShowAll = !showAll;
     setShowAll(newShowAll);

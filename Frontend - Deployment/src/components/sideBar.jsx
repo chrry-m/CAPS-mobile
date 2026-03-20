@@ -35,6 +35,7 @@ const Sidebar = ({
   }, [location]);
 
   useEffect(() => {
+    // Handle resize.
     const handleResize = () => setIsMobile(window.innerWidth <= 640);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -77,6 +78,14 @@ const Sidebar = ({
     ];
   }
   const adminItems = [{ icon: "bx-group", label: "Users", path: "/users" }];
+  const adminFeatureItems = [
+    { icon: "bx-support", label: "Support", path: "/admin/support" },
+    {
+      icon: "bx-bar-chart-alt-2",
+      label: "Analytics",
+      path: "/admin/analytics",
+    },
+  ];
   const classes = [{ icon: "bx-book-bookmark", label: "Classes" }];
 
   let menuItems = [];
@@ -87,10 +96,13 @@ const Sidebar = ({
 
     if (parsedRoleId >= 2) menuItems = [...menuItems, ...facultyItems];
     if (parsedRoleId >= 2) menuItems = [...menuItems, ...adminItems];
+    if (parsedRoleId >= 4) menuItems = [...menuItems, ...adminFeatureItems];
   }
 
+  // Manage is active.
   const isActive = (path) => location.pathname === path;
 
+  // Handle menu click.
   const handleMenuClick = () => {
     setIsExpanded(false);
     setIsSubjectFocused(false);
@@ -101,13 +113,17 @@ const Sidebar = ({
   if (isMobile) {
     return (
       <>
-        <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-300 bg-white/95 px-6 py-2 backdrop-blur-md dark:border-white/10 dark:bg-black/95 min-[500px]:px-9">
+        <div className="fixed right-0 bottom-0 left-0 z-50 border-t border-gray-300 bg-white/95 px-6 py-2 backdrop-blur-md min-[500px]:px-9 dark:border-white/10 dark:bg-black/95">
           <div className="flex items-center justify-between">
             {/* Left side - Users and Print */}
             <div className="flex items-center gap-5 min-[345px]:gap-8 min-[500px]:gap-18">
               {menuItems
                 .filter(
-                  (item) => item.label === "Users" || item.label === "Print",
+                  (item) =>
+                    item.label === "Users" ||
+                    item.label === "Print" ||
+                    item.label === "Support" ||
+                    item.label === "Analytics",
                 )
                 .map((item, index) => (
                   <div key={index} className="flex flex-col items-center">
@@ -367,7 +383,9 @@ const Sidebar = ({
                     to={item.path}
                     onClick={handleMenuClick}
                     className={`flex cursor-pointer items-center gap-3 rounded-md px-[8px] py-[8px] transition-colors hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-white/5 dark:hover:text-white${
-                      isActive(item.path) ? "" : "hover:text-gray-800 dark:hover:text-white"
+                      isActive(item.path)
+                        ? ""
+                        : "hover:text-gray-800 dark:hover:text-white"
                     }`}
                   >
                     <i
