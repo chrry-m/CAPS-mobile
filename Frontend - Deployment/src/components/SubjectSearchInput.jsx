@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
+// Renders the subject search input.
 export default function SubjectSearchInput({ options, onChange, placeholder }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -28,6 +29,7 @@ export default function SubjectSearchInput({ options, onChange, placeholder }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Handles input change.
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
     setShowSuggestions(true);
@@ -38,6 +40,7 @@ export default function SubjectSearchInput({ options, onChange, placeholder }) {
     }, 500);
   };
 
+  // Handles suggestion click.
   const handleSuggestionClick = (option) => {
     onChange({ target: { value: option.value } });
     setSearchTerm("");

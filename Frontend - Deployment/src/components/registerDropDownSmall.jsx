@@ -7,6 +7,7 @@ const RegisterDropDown = ({ name, value, onChange, options, placeholder }) => {
   const buttonRef = useRef(null);
 
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
@@ -19,6 +20,7 @@ const RegisterDropDown = ({ name, value, onChange, options, placeholder }) => {
     };
   }, []);
 
+  // Handles open dropdown.
   const handleOpenDropdown = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();

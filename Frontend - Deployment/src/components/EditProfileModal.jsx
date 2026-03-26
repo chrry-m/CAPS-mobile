@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 
+// Renders the edit profile modal.
 const EditProfileModal = ({ isOpen, onClose }) => {
   return (
     <div className="font-inter bg-opacity-40 lightbox-bg fixed inset-0 z-100 flex items-center justify-center">

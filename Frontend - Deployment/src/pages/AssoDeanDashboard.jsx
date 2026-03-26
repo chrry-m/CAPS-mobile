@@ -1,5 +1,6 @@
 import ComingSoon from "../assets/icons/comingsoon.png";
 
+// Renders the asso dean dashboard.
 const AssoDeanDashboard = () => {
   return (
     <div className="mt-8 text-center text-gray-500">

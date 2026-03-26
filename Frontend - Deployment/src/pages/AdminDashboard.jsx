@@ -3,6 +3,7 @@ import ComingSoon from "../assets/icons/comingsoon.png";
 import { format, isThisWeek, isToday, isThisMonth, parseISO } from "date-fns";
 import { getApiUrl } from "../utils/config";
 
+// Renders the admin dashboard.
 const AdminDashboard = () => {
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [pendingQuestions, setPendingQuestions] = useState(0);
@@ -55,6 +56,7 @@ const AdminDashboard = () => {
   const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
 
   useEffect(() => {
+    // Fetches question count.
     const fetchQuestionCount = async () => {
       setLoadingQuestions(true);
       try {
@@ -89,6 +91,7 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
+    // Fetches user count.
     const fetchUserCount = async () => {
       setLoadingUsers(true);
       try {
@@ -136,6 +139,7 @@ const AdminDashboard = () => {
   }, [userRole]);
 
   useEffect(() => {
+    // Fetches subjects.
     const fetchSubjects = async () => {
       setLoadingSubjects(true);
       try {
@@ -172,6 +176,7 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
+    // Fetches leaderboard.
     const fetchLeaderboard = async () => {
       setLoadingLeaderboard(true);
       try {

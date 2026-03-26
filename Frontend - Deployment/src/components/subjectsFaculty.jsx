@@ -9,6 +9,7 @@ import notFoundImage from "../assets/icons/notfound.png";
 import noInternetImage from "../assets/icons/404notfound.png";
 import emptyImage from "../assets/icons/empty.png";
 
+// Renders the side bar drop down.
 const SideBarDropDown = ({
   item,
   isExpanded,
@@ -72,6 +73,7 @@ const SideBarDropDown = ({
 
   // Handle screen resize and panel state
   useEffect(() => {
+    // Handles resize.
     const handleResize = () => {
       const wasSmallScreen = isMobile;
       const isNowSmallScreen = window.innerWidth < 640;
@@ -220,6 +222,7 @@ const SideBarDropDown = ({
     fetchSubjects();
   }, []);
 
+  // Fetches subjects.
   const fetchSubjects = async () => {
     const token = localStorage.getItem("token");
     setLoading(true);
@@ -267,6 +270,7 @@ const SideBarDropDown = ({
     }
   };
 
+  // Fetches assigned subjects.
   const fetchAssignedSubjects = async () => {
     const token = localStorage.getItem("token");
     setSubjectLoading(true);
@@ -355,6 +359,7 @@ const SideBarDropDown = ({
 
   // Close dropdown on outside click
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowYearSubjects(false);
@@ -372,6 +377,7 @@ const SideBarDropDown = ({
 
   // Close program filter dropdown on outside click
   useEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         programFilterRef.current &&
@@ -390,6 +396,7 @@ const SideBarDropDown = ({
     };
   }, [showProgramFilter]);
 
+  // Handles select subject.
   const handleSelectSubject = (subject) => {
     setSelectedSubject(subject);
 
@@ -406,6 +413,7 @@ const SideBarDropDown = ({
     }
   };
 
+  // Handles assign subject.
   const handleAssignSubject = async (subject) => {
     if (!subject) return;
 
@@ -446,6 +454,7 @@ const SideBarDropDown = ({
   };
 
   useEffect(() => {
+    // Fetches programs.
     const fetchPrograms = async () => {
       const token = localStorage.getItem("token");
 
@@ -464,6 +473,7 @@ const SideBarDropDown = ({
       }
     };
 
+    // Fetches year levels.
     const fetchYearLevels = async () => {
       const token = localStorage.getItem("token");
 
@@ -502,6 +512,7 @@ const SideBarDropDown = ({
     if (isOpen && window.innerWidth < 640) {
       // Push a new state to the history stack
       window.history.pushState({ panelOpen: true }, "");
+      // Handles pop state.
       const handlePopState = (event) => {
         if (isOpen) {
           setIsOpen(false);
@@ -527,6 +538,7 @@ const SideBarDropDown = ({
   };
 
   useEffect(() => {
+    // Handles refresh.
     const handleRefresh = () => fetchAssignedSubjects();
     window.addEventListener("refreshSubjectsList", handleRefresh);
     return () =>

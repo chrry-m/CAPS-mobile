@@ -7,6 +7,7 @@ const DEFAULT_TEST_IP = '18.142.190.113';
 const DEFAULT_TEST_PORT = '8000';
 const DEFAULT_LOCAL_PORT = '8005';
 
+// Renders the server config modal.
 const ServerConfigModal = ({ isOpen, onClose, onSave }) => {
   const [serverType, setServerType] = useState('local');
   const [localIp, setLocalIp] = useState('');
@@ -55,6 +56,7 @@ const ServerConfigModal = ({ isOpen, onClose, onSave }) => {
     }
   }, [isOpen]);
 
+  // Handles test connection.
   const handleTestConnection = async () => {
     setIsLoading(true);
     let testUrl = '';
@@ -108,6 +110,7 @@ const ServerConfigModal = ({ isOpen, onClose, onSave }) => {
     }
   };
 
+  // Handles save.
   const handleSave = () => {
     let apiUrl = '';
     

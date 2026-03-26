@@ -4,10 +4,12 @@ import React, { useState, useEffect } from "react";
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
 
+  // Checks scroll.
   const checkScroll = () => {
     setIsVisible(window.scrollY > 300);
   };
 
+  // Handles scroll to top.
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,

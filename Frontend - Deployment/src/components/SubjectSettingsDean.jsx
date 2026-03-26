@@ -10,6 +10,7 @@ import {
 import Toast from "./Toast";
 import useToast from "../hooks/useToast";
 import RegisterDropDownSmall from "./registerDropDownSmall";
+// Renders the practice exam config.
 const PracticeExamConfig = ({
   subjectID,
   isFormOpen,
@@ -83,6 +84,7 @@ const PracticeExamConfig = ({
 
   // Fetch current settings when form opens
   useEffect(() => {
+    // Fetches current settings.
     const fetchCurrentSettings = async () => {
       if (isFormOpen && subjectID) {
         try {
@@ -166,6 +168,7 @@ const PracticeExamConfig = ({
   const coverageButtonRef = useLocalRef(null);
 
   useLocalEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         coverageDropdownRef.current &&
@@ -186,6 +189,7 @@ const PracticeExamConfig = ({
   const diffButtonRef = useLocalRef(null);
 
   useLocalEffect(() => {
+    // Handles click outside.
     const handleClickOutside = (event) => {
       if (
         diffDropdownRef.current &&
@@ -202,6 +206,7 @@ const PracticeExamConfig = ({
 
   const { toast, showToast } = useToast();
 
+  // Handles change.
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setSettings((prev) => ({
@@ -210,6 +215,7 @@ const PracticeExamConfig = ({
     }));
   };
 
+  // Handles submit.
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditing(true);
@@ -336,6 +342,7 @@ const PracticeExamConfig = ({
     }
   };
 
+  // Handles cancel click.
   const handleCancelClick = () => {
     setIsFormOpen(false);
   };
@@ -353,6 +360,7 @@ const PracticeExamConfig = ({
 
   // Update active section on scroll
   useEffect(() => {
+    // Handles scroll.
     const handleScroll = () => {
       if (scrollLock) return;
       if (!qeRef.current || !practiceRef.current) return;

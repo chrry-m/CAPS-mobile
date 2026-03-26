@@ -5,6 +5,7 @@ import WarnOnExit from "../hooks/WarnOnExit";
 import Toast from "./Toast";
 import useToast from "../hooks/useToast";
 
+// Renders the duplicate question form.
 const DuplicateQuestionForm = ({
   question,
   onComplete,
@@ -91,6 +92,7 @@ const DuplicateQuestionForm = ({
 
   // Question text formatting handlers
   useEffect(() => {
+    // Handles selection change.
     const handleSelectionChange = () => {
       setIsBold(document.queryCommandState("bold"));
       setIsItalic(document.queryCommandState("italic"));
@@ -102,12 +104,14 @@ const DuplicateQuestionForm = ({
       document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
 
+  // Handles format.
   const handleFormat = (command, setState) => {
     document.execCommand(command, false, null);
     setState(document.queryCommandState(command));
     editorRef.current.focus();
   };
 
+  // Checks formatting.
   const checkFormatting = () => {
     setTimeout(() => {
       setIsBold(document.queryCommandState("bold"));

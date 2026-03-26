@@ -1,3 +1,4 @@
+// Handles logout user.
 export function logoutUser(showToast, navigate, message) {
   localStorage.removeItem("token");
   // Remove any other user data if needed
