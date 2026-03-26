@@ -142,9 +142,7 @@ AGENT.md
 DATABASE_GUIDE.md
 .agent/FRONTEND_RULES.md
 status_id_bug_report.txt
-DocumentedLearning/learn.md
-DocumentedLearning/CHANGELOG.md
-DocumentedLearning/interview-questions-and-answers.txt
+DocumentedLearning/
 BACKEND TASKS.md
 AGENTS.md
 GEMINI.md

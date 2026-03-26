@@ -17,6 +17,7 @@ use Modules\Questions\Models\Difficulty;
 use Modules\PracticeExams\Models\PersonalExamSetting;
 use Modules\Users\Models\StudentTeacherEnrollment;
 use Modules\Users\Models\User;
+use Modules\Leaderboard\Models\Leaderboard;
 
 class PracticeExamController extends Controller
 {
@@ -731,6 +732,10 @@ class PracticeExamController extends Controller
             'earnedPoints' => $earnedPoints,
             'percentage' => round($percentage, 2),
         ]);
+
+        Leaderboard::updateOrCreateRecord($user->userID, $validated['subjectID'], round($percentage, 2));
+        
+        Leaderboard::recalculateAllScores();
 
         return response()->json([
             'message' => 'Exam submitted successfully.',
